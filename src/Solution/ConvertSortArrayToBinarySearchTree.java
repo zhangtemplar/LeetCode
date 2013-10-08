@@ -1,47 +1,38 @@
-package Solution;
-
-public class ConvertSortArrayToBinarySearchTree {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public TreeNode sortedArrayToBST(int[] num) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we use recursion
-        // we find the medium as the root
-        // then divide the array into two parts one for left subtree and the other
-        // for right subtree
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public TreeNode sortedArrayToBST(int[] num) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will recursion, where the middle is put to the root, left-half to the left subtree and right-half to the right subtree
         if (num==null || num.length<1)
         {
             return null;
         }
-        int middle=(num.length)/2;
-        TreeNode root=new TreeNode(num[middle]);
-        root.left=sortedArrayToBST(num, 0, middle-1);
-        root.right=sortedArrayToBST(num, middle+1, num.length-1);
+        TreeNode root=new TreeNode(0);
+        sortedArrayToBST(num, 0, num.length-1, root);
         return root;
     }
     
-    public TreeNode sortedArrayToBST(int[] num, int start, int end)
+    private void sortedArrayToBST(int[] num, int start, int end, TreeNode root)
     {
-        if (start>end)
+        int middle=(start+end)/2;
+        root.val=num[middle];
+        if (start<middle)
         {
-            return null;
+            root.left=new TreeNode(0);
+            sortedArrayToBST(num, start, middle-1, root.left);
         }
-        int middle=(start+end+1)/2;
-        TreeNode root=new TreeNode(num[middle]);
-        if (start==end)
+        if (end>middle)
         {
-            return root;
+            root.right=new TreeNode(0);
+            sortedArrayToBST(num, middle+1, end, root.right);
         }
-        root.left=sortedArrayToBST(num, start, middle-1);
-        root.right=sortedArrayToBST(num, middle+1, end);
-        return root;
     }
 }
