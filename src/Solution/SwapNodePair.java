@@ -1,43 +1,35 @@
-package Solution;
-
-public class SwapNodePair {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ListNode swapPairs(ListNode head) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // the pointer to the head of result, even node and odd node of the current pair
-        // and also swap
-        // we assume the list starts from 0
-        ListNode result, even, odd;
-        // special case, when the list has less than two nodes, we skip it
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode swapPairs(ListNode head) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
         if (head==null || head.next==null)
         {
             return head;
         }
-        // common case
-        result=head.next;
-        even=head;
-        odd=result.next;
-        result.next=even;
-        even.next=odd;
-        while (odd!=null && even!=null && odd.next!=null)
+        // create an auxillary node for the head
+        ListNode result=new ListNode(0);
+        result.next=head;
+        ListNode current=result;
+        ListNode next=null;
+        while(current.next!=null && current.next.next!=null)
         {
-            // do the swap
-            even.next=odd.next;
-            odd.next=odd.next.next;
-            even.next.next=odd;
-            // mvoe the point
-            even=odd;
-            odd=odd.next;
+            next=current.next;
+            current.next=next.next;
+            current=next.next;
+            next.next=current.next;
+            current.next=next;
+            current=current.next;
         }
-        return result;
+        return result.next;
     }
 }
