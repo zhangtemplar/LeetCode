@@ -1,40 +1,20 @@
-package Solution;
-
-public class RemoveDuplicateSortedArray {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int removeDuplicates(int[] A) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int count=0;
+public class Solution {
+    public int removeDuplicates(int[] A) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // linear complexity
         if (A==null || A.length<1)
         {
-            return count;
+            return 0;
         }
-        // the last distinct value we found
-        int previous=A[0];
-        // the first available place to fit in
-        int last=1;
-        count++;
-        for (int i=1; i<A.length; i++)
+        int available=0;
+        for (int i=0; i<A.length; i++)
         {
-            if (A[i]!=previous)
+            if (A[i]!=A[available])
             {
-                // change the length
-                count++;
-                // change the distinct value
-                previous=A[i];
-                // save this value also
-                A[last++]=previous;
+                available++;
+                A[available]=A[i];
             }
         }
-        return count;
+        return available+1;
     }
 }
