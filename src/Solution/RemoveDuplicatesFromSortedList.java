@@ -1,41 +1,36 @@
-package Solution;
-
-import java.util.HashSet;
-
-public class RemoveDuplicatesFromSortedList {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ListNode deleteDuplicates(ListNode head)
-	{
-		if (head==null)
-		{
-			return null;
-		}
-		HashSet<Integer> set=new HashSet<Integer>();
-		set.add(head.val);
-		ListNode prev, current;
-		prev=head;
-		current=prev.next;
-		while(current!=null)
-		{
-			if (set.contains(current.val))
-			{
-				prev.next=current.next;
-				current=current.next;
-			}
-			else
-			{
-				prev=prev.next;
-				current=current.next;
-			}
-		}
-		return head;
-	}
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        if (head==null || head.next==null)
+        {
+            return head;
+        }
+        ListNode node=head;
+        while(node!=null && node.next!=null)
+        {
+            // we find an duplicate
+            if (node.val==node.next.val)
+            {
+                // remove the next element
+                node.next=node.next.next;
+            }
+            else
+            {
+                // otherwise continue;
+                node=node.next;
+            }
+        }
+        return head;
+    }
 }
