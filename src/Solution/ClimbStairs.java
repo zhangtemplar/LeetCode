@@ -1,38 +1,35 @@
-package Solution;
-
-public class ClimbStairs {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int climbStairs(int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use dynamic programming
-        if (n<1)
-        {
-            return 0;
-        }
-        else if(n==1)
+public class Solution {
+    public int climbStairs(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // it is a recursion
+        if (n<=1)
         {
             return 1;
         }
-        else if(n==2)
+        buffer=new HashMap<Integer, Integer>();
+        return subClimbStairs(n);
+    }
+    
+    private static HashMap<Integer, Integer> buffer;
+    
+    private int subClimbStairs(int n)
+    {
+        if (buffer.containsKey(n))
         {
-            return 2;
+            return buffer.get(n);
         }
-        int []result=new int[n];
-        result[0]=1;
-        result[1]=2;
-        for (int i=2; i<n; i++)
+        int result=0;
+        if (n<=1)
         {
-            result[i]=result[i-1]+result[i-2];
+            result=1;
         }
-        return result[n-1];
+        else
+        {
+            // we can either climb 2 steps or 1 step
+            // which result in n-2 or n-1 steps to go
+            result=subClimbStairs(n-1)+subClimbStairs(n-2);
+        }
+        buffer.put(n, result);
+        return result;
     }
 }
