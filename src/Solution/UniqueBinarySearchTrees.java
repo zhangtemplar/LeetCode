@@ -1,32 +1,38 @@
-package Solution;
-
-public class UniqueBinarySearchTrees {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int numTrees(int n) {
+public class Solution {
+    public int numTrees(int n) {
         // Start typing your Java solution below
         // DO NOT write main() function
-        if (n<=1)
+        // we will use recursion (or dynamic programming)
+        // numTrees(n)=\sum_{i=0}^{n}{numTrees(i)*numTrees(n-i-1)}
+        if (n<=0)
         {
             return 1;
         }
-        int []count=new int[n+1];
-        count[0]=1;
-        count[1]=1;
-        for (int i=2; i<=n; i++)
+        buffer=new HashMap<Integer, Integer>();
+        return subNumTrees(n);
+    }
+    
+    private static HashMap<Integer, Integer> buffer;
+    
+    private int subNumTrees(int n)
+    {
+        if (buffer.containsKey(n))
         {
-            for (int j=0; j<i; j++)
+            return buffer.get(n);
+        }
+        int result=0;
+        if (n<=1)
+        {
+            result=1;
+        }
+        else
+        {
+            for (int i=0; i<n; i++)
             {
-                count[i]+=count[j]*count[i-j-1];
+                result+=subNumTrees(i)*subNumTrees(n-i-1);
             }
         }
-        return count[n];
+        buffer.put(n, result);
+        return result;
     }
 }
