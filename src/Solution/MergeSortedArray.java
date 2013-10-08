@@ -1,27 +1,17 @@
-package Solution;
-
-public class MergeSortedArray {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void merge(int A[], int m, int B[], int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public void merge(int A[], int m, int B[], int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        if (A==null || A.length<1 || B==null || B.length<1 || n<1 || A.length<m+n)
+        {
+            return;
+        }
+        int i=m-1;
+        int j=n-1;
+        int k=A.length-1;
         // we start from the end
-        // we always put the larger element to the end of the array
-        int i, j, k;
-        i=m-1;
-        j=n-1;
-        k=A.length-1;
         while(i>=0 && j>=0)
         {
-            if (A[i]>=B[j])
+            if (A[i]>B[j])
             {
                 A[k]=A[i];
                 i--;
@@ -33,13 +23,18 @@ public class MergeSortedArray {
             }
             k--;
         }
-        // post-processing
-        // fill remaining of B to A
+        // clean up the remaining
+        while(i>=0)
+        {
+            A[k]=A[i];
+            k--;
+            i--;
+        }
         while(j>=0)
         {
             A[k]=B[j];
-            j--;
             k--;
+            j--;
         }
     }
 }
