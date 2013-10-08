@@ -1,19 +1,16 @@
-package Solution;
-
-public class SameTree {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public boolean isSameTree(TreeNode p, TreeNode q) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we can use recursion
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion
         if (p==null)
         {
             if (q==null)
@@ -25,17 +22,54 @@ public class SameTree {
                 return false;
             }
         }
-        else if (q==null)
+        // p!=null
+        if (q==null)
         {
             return false;
         }
-        else if (q.val!=p.val)
+        // check the value
+        if (p.val==q.val)
         {
-            return false;
+            // check the subtree
+            // left tree first
+            if (p.left==null)
+            {
+                if (q.left!=null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (q.left==null)
+                {
+                    return false;
+                }
+                else if(!isSameTree(p.left, q.left))
+                {
+                    return false;
+                }
+            }
+            // so far so good, then check the right subtree
+            if (p.right==null)
+            {
+                return q.right==null;
+            }
+            else
+            {
+                if (q.right==null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return isSameTree(p.right, q.right);
+                }
+            }
         }
         else
         {
-            return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+            return false;
         }
     }
 }
