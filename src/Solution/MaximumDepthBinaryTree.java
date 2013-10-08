@@ -1,50 +1,33 @@
-package Solution;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-
-public class MaximumDepthBinaryTree {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int maxDepth(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use DFS
-        LinkedList<TreeNode> queue=new LinkedList<TreeNode>();
-        HashMap<TreeNode, Integer> level=new HashMap<TreeNode, Integer>();
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public int maxDepth(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion
+        // the depth is the larger of the depthes of the two subtrees plus 1
+        // empty node
         if (root==null)
         {
             return 0;
         }
-        queue.add(root);
-        level.put(root, 1);
-        int height=1;
-        while(!queue.isEmpty())
+        int depth=1;
+        if (root.left!=null)
         {
-            TreeNode node=queue.remove();
-            if (level.containsKey(node))
-            {
-                height=height>level.get(node)?height:level.get(node);
-            }
-            // add its children and their height accordingly
-            if (node.left!=null)
-            {
-                queue.add(node.left);
-                level.put(node.left, level.get(node)+1);
-            }
-            if (node.right!=null)
-            {
-                queue.add(node.right);
-                level.put(node.right, level.get(node)+1);
-            }
+            int dl=maxDepth(root.left)+1;
+            depth=depth>dl?depth:dl;
         }
-        return height;
+        if (root.right!=null)
+        {
+            int dr=maxDepth(root.right)+1;
+            depth=depth>dr?depth:dr;
+        }
+        return depth;
     }
 }
