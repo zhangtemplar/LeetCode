@@ -1,0 +1,41 @@
+public class Solution {
+    public int romanToInt(String s) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        if (s==null || s.length()<1)
+        {
+            return 0;
+        }
+        // some constant
+        HashMap<Character, Integer> value=new HashMap<Character, Integer>();
+        value.put('I', 1);
+        value.put('V', 5);
+        value.put('X', 10);
+        value.put('L', 50);
+        value.put('C', 100);
+        value.put('D', 500);
+        value.put('M', 1000);
+        // to deal with values like IV=4, we need to process it two by two
+        int result=0;
+        int i=0;
+        for (i=0; i<s.length()-1; i++)
+        {
+            // check for case like IV
+            if (value.get(s.charAt(i))<value.get(s.charAt(i+1)))
+            {
+                result+=value.get(s.charAt(i+1))-value.get(s.charAt(i));
+                i++;
+            }
+            else
+            {
+                // ordinary case
+                result+=value.get(s.charAt(i));
+            }
+        }
+        // for the final case
+        if (i<s.length())
+        {
+            result+=value.get(s.charAt(i));
+        }
+        return result;
+    }
+}
