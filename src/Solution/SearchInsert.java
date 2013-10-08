@@ -1,89 +1,54 @@
-package Solution;
-
-public class SearchInsert {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int searchInsert(int[] A, int target) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // this is exactly what the Arrays.binarySearch() does
+public class Solution {
+    public int searchInsert(int[] A, int target) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we shall use a binary search
         if (A==null || A.length<1)
         {
             return 0;
         }
-        int result=searchInsert(A, 0, A.length-1, target);
-        if (result<0)
-        {
-            return -1-result;
-        }
-        else
-        {
-            return result;
-        }
+        return searchInsert(A, 0, A.length-1, target);
     }
     
-    /**
-     * this function returns the index of target
-     *      >0, if the target is found
-     *      <0, if the target is not found, we instead return the location it should be inserted
-     *          -1-i;
-     */
     private int searchInsert(int[] A, int start, int end, int target)
     {
-        // basic case
-        if (start>end)
+        // base case
+        if(start==end)
         {
-            // this should never happen
-            return -1-start;
-        }
-        if (start==end)
-        {
-            if (A[start]==target)
+            if (target==A[start])
             {
                 return start;
             }
-            else if (A[start]>target)
+            else if (target>A[start])
             {
-                // it should be inserted before it
-                return -1-start;
+                return start+1;
             }
             else
             {
-                return -2-start;
+                return start;
             }
         }
+        // use binary search
         int middle=(start+end)/2;
-        // search for the left
-        if (A[middle]>=target && A[start]<=target)
+        // we found it
+        if (target==A[middle])
         {
-            return searchInsert(A, start, middle, target);
+            return middle;
         }
-        // for the right
-        else if (A[middle+1]<=target && A[end]>=target)
+        else if (target<A[middle])
         {
-            return searchInsert(A, middle+1, end, target);
-        }
-        // my god, either halves works
-        // there is only one possibility:
-        // target is either too small or too large
-        else if (A[start]>target)
-        {
-            return -1-start;
-        }
-        else if (A[end]<target)
-        {
-            return -2-end;
+            // in case start=end-1
+            if (start==middle)
+            {
+                return start;
+            }
+            else
+            {
+                return searchInsert(A, start, middle-1, target);
+            }
         }
         else
         {
-            return -2-middle;
+            return searchInsert(A, middle+1, end, target);
         }
     }
 }
