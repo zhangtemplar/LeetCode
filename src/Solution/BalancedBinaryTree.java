@@ -1,51 +1,60 @@
-package Solution;
-
-public class BalancedBinaryTree {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public boolean isBalanced(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use DFS to obtain the height
-        return getHeight(root)>=0;
-    }
-    
-    // -1, if the subtree is not balanced
-    // otherwise, return the height of the subtree
-    public int getHeight(TreeNode root)
-    {
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public boolean isBalanced(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // step 1, we compute the depth of each subtree
         if (root==null)
         {
-            return 0;
+            return true;
         }
+        return computeDepth(root)>=0;
+    }
+    
+    private int computeDepth(TreeNode root)
+    {
         if (root.left==null && root.right==null)
         {
             return 1;
         }
-        int left=getHeight(root.left);
-        if (left<0)
-        {
-            return -1;
-        }
-        int right=getHeight(root.right);
-        if (right<0)
-        {
-            return -1;
-        }
-        if (left>right+1 || left+1<right)
-        {
-            return -1;
-        }
         else
         {
-            return (left>right?left:right)+1;
+            int depth=0;
+            // check the left tree
+            int depth_left=0;
+            if (root.left!=null)
+            {
+                depth_left=computeDepth(root.left);
+                if (depth_left<0)
+                {
+                    return -1;
+                }
+            }
+            int depth_right=0;
+            if(root.right!=null)
+            {
+                depth_right=computeDepth(root.right);
+                if (depth_right<0)
+                {
+                    return -1;
+                }
+            }
+            // check the balance
+            if (depth_left>depth_right+1 || depth_left+1<depth_right)
+            {
+                return -1;
+            }
+            else
+            {
+                return (depth_left>depth_right?depth_left:depth_right)+1;
+            }
         }
     }
 }
