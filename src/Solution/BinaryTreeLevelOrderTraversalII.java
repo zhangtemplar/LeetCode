@@ -8,16 +8,13 @@
  * }
  */
 public class Solution {
-    public ArrayList<ArrayList<Integer>> levelOrderBottom(TreeNode root) {
+    public ArrayList<ArrayList<Integer>> levelOrder(TreeNode root) {
         // Note: The Solution object is instantiated only once and is reused by each test case.
-        // we will save the result of each level to a stack, then push the result to array
         ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
         if (root==null)
         {
             return result;
         }
-        // save the result for the leaf to root order
-        Stack<ArrayList<Integer>> stack=new Stack<ArrayList<Integer>>();
         // the result of each level
         ArrayList<Integer> array=new ArrayList<Integer>();
         // the nodes to be visited
@@ -34,7 +31,7 @@ public class Solution {
             if (current_depth!=depth.get(node))
             {
                 // finish a level
-                stack.push(array);
+                result.add(array);
                 array=new ArrayList<Integer>();
                 current_depth=depth.get(node);
             }
@@ -52,11 +49,6 @@ public class Solution {
         }
         // for the leaf level
         result.add(array);
-        while(!stack.isEmpty())
-        {
-            array=stack.pop();
-            result.add(array);
-        }
         return result;
     }
 }
