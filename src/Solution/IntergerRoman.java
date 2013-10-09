@@ -1,105 +1,52 @@
-package Solution;
-
-import java.util.Random;
-
-public class IntergerRoman {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Random seed=new Random();
-		int x;
-		String str;
-		for (int i=0; i<100; i++)
-		{
-			x=seed.nextInt(3999);
-			str=intToRoman(x);
-			System.out.println(x+" "+str+" "+romanToInt(str));
-		}
-	}
-
-	public static String intToRoman(int num) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int sign=1;
-        if (num<0)
-        {
-            sign=-1;
-        }
-        StringBuffer str=new StringBuffer();
-        int x;
-        int y;
-        y=0;
+public class Solution {
+    public String intToRoman(int num) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        HashMap<Integer, Character> value=new HashMap<Integer, Character>();
+        value.put(1, 'I');
+        value.put(5, 'V');
+        value.put(10, 'X');
+        value.put(50, 'L');
+        value.put(100, 'C');
+        value.put(500, 'D');
+        value.put(1000, 'M');
+        int digit=0;
+        int base=1;
+        StringBuffer result=new StringBuffer();
         while(num>0)
         {
-            x=num%10;
-            num=num/10;
-            str.insert(0, String_Pattern[y][x]);
-            y++;
-        }
-        if (sign<0)
-        {
-            str.insert(0, '-');
-        }
-        return str.toString();
-    }
-    // some constants
-    private static final String [][]String_Pattern={
-        {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
-        {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
-        {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
-        {"", "M", "MM", "MMM"}};
-    
-    public static int romanToInt(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int result=0;
-        int i=0;
-        int flag=1;
-        boolean skip=false;
-        while (i<s.length())
-        {
-            // in case of sign
-            if (s.charAt(i)=='-')
+            digit=num%10;
+            if (digit<4)
             {
-                flag=-1;
-                i++;
-                continue;
+                for (int i=1; i<=digit; i++)
+                {
+                    result.insert(0, value.get(base));
+                }
             }
-            if (i<s.length()-1)
+            else if(digit==4)
             {
-            	// 4
-            	if (String_Order[s.charAt(i)]+1==String_Order[s.charAt(i+1)])
-            	{
-            		result=result+4*String_Value[s.charAt(i)];
-            		i++;
-            	}
-            	else if (String_Order[s.charAt(i)]+2==String_Order[s.charAt(i+1)])
-            	{
-            		result=result+9*String_Value[s.charAt(i)];
-            		i++;
-            	}
-            	else
-            	{
-            		result=result+String_Value[s.charAt(i)];
-            	}
+                result.insert(0, value.get(base*5));
+                result.insert(0, value.get(base));
+            }
+            else if(digit==5)
+            {
+                result.insert(0, value.get(base*5));
+            }
+            else if(digit<9)
+            {
+                for (int i=6; i<=digit; i++)
+                {
+                    result.insert(0, value.get(base));
+                }
+                result.insert(0, value.get(base*5));
             }
             else
             {
-        		result=result+String_Value[s.charAt(i)];
+                result.insert(0, value.get(base*10));
+                result.insert(0, value.get(base));
             }
-            i++;
+            num=num/10;
+            base=base*10;
         }
-        return flag*result;
+        return result.toString();
     }
-    
-    private static final int[] String_Order={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,5,6,0,0,0,0,1,0,0,4,7,0,0,0,0,0,0,0,0,2,0,3,0,0,0,0,0,0,0,
-    0,0,0,5,6,0,0,0,0,1,0,0,4,7,0,0,0,0,0,0,0,0,2,0,3,0,0,0,0,0,0,0};
-    
-    private static final int[] String_Value={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,100,500,0,0,0,0,1,0,0,50,1000,0,0,0,0,0,0,0,0,5,0,10,0,0,0,0,0,0,0,
-        0,0,0,100,500,0,0,0,0,1,0,0,50,1000,0,0,0,0,0,0,0,0,5,0,10,0,0,0,0,0,0,0};
 }
