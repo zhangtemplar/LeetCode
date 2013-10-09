@@ -1,58 +1,27 @@
-package Solution;
-
-import java.util.ArrayList;
-
-public class GrayCode {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		GrayCode instance=new GrayCode();
-		System.out.println(instance.grayCode(3));
-	}
-
-	public ArrayList<Integer> grayCode(int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use recursion
-        // n=0: 0
-        // n=1: 0 1
-        // n=2: 0 1 (1 0)+2
-        // n=3: 0 1 3 2 (2 0 1 3)+4
+public class Solution {
+    public ArrayList<Integer> grayCode(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will assume for n=3, we have 0 1 3 2 6 7 5 4
+        // we will use recursion, assume we have a[n] as the result for n
+        // then a[n+1]={a[n] 2^(n-1)+a[-n]}, where a[-n] refers to a reverse order
         ArrayList<Integer> result=new ArrayList<Integer>();
-        // base case
         if (n<1)
         {
             result.add(0);
-            return result;
-        }
-        else if (n==1)
-        {
-            result.add(0);
-            result.add(1);
-            return result;
         }
         else
         {
             ArrayList<Integer> base=grayCode(n-1);
-            // there could be overflow for n>31
-            int val=1<<(n-1);
-            int i=0;
-            // first part
-            for (i=0; i<base.size(); i++)
+            for (Integer x: base)
             {
-                result.add(base.get(i));
+                result.add(x);
             }
-            // second part
-            i--;
-            int j;
-            for (j=0; j<base.size(); j++)
+            int offset=1<<(n-1);
+            for (int i=base.size()-1; i>=0; i--)
             {
-                result.add(val+base.get((i-j)%base.size()));
+                result.add(offset+base.get(i));
             }
-            return result;
         }
+        return result;
     }
 }
