@@ -1,67 +1,71 @@
-package Solution;
-
-public class Search2DMatrix {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public boolean searchMatrix(int[][] matrix, int target) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we can use a binary search
-        // we first get the row index and then the column index
-        if (matrix==null || matrix.length<1 || matrix[0]==null || matrix[0].length<1)
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // this is a binary search problem
+        if (matrix==null || matrix.length<1)
         {
             return false;
         }
-        int l_row=0;
-        int u_row=matrix.length-1;
-        int row=(matrix.length-1)/2;
-        while(u_row>=l_row)
+        return searchMatrix(matrix, 0, matrix.length-1, target);
+    }
+    
+    private boolean searchMatrix(int[][] matrix, int start, int end, int target)
+    {
+        if (start==end)
         {
-            if (matrix[row][0]>target)
+            return searchMatrix(matrix[start], 0, matrix[start].length-1, target);
+        }
+        int middle=(start+end)/2;
+        if (matrix[middle]==null || matrix[middle].length<1)
+        {
+            return false;
+        }
+        if (matrix[middle][0]>target)
+        {
+            if (middle==start)
             {
-                // search in row before it
-                u_row=row-1;
-                row=(u_row+l_row)/2;
-            }
-            else if(matrix[row][matrix[row].length-1]<target)
-            {
-                // search in row after it;
-                l_row=row+1;
-                row=(u_row+l_row)/2;
+                return false;
             }
             else
             {
-                // we found the row
-                break;
+                return searchMatrix(matrix, start, middle-1, target);
             }
         }
-        int l_col=0;
-        int u_col=matrix[row].length-1;
-        int col=(u_col+l_col)/2;
-        while(u_col>=l_col)
+        else if(matrix[middle][matrix[middle].length-1]<target)
         {
-            if(matrix[row][col]>target)
+            return searchMatrix(matrix, middle+1, end, target);
+        }
+        else
+        {
+            return searchMatrix(matrix[middle], 0, matrix[middle].length-1, target);
+        }
+    }
+    
+    private boolean searchMatrix(int[] matrix, int start, int end, int target)
+    {
+        if (start==end)
+        {
+            return matrix[start]==target;
+        }
+        int middle=(start+end)/2;
+        if (matrix[middle]==target)
+        {
+            return true;
+        }
+        else if (matrix[middle]>target)
+        {
+            if (middle==start)
             {
-                u_col=col-1;
-                col=(u_col+l_col)/2;
-            }
-            else if(matrix[row][col]<target)
-            {
-                l_col=col+1;
-                col=(u_col+l_col)/2;
+                return false;
             }
             else
             {
-                return true;
+                return searchMatrix(matrix, start, middle-1, target);
             }
         }
-        return false;
+        else
+        {
+            return searchMatrix(matrix, middle+1, end, target);
+        }
     }
 }
