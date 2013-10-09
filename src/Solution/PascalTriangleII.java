@@ -1,46 +1,23 @@
-package Solution;
-
-import java.util.ArrayList;
-
-public class PascalTriangleII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<Integer> getRow(int rowIndex) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public ArrayList<Integer> getRow(int rowIndex) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we still use recursion
+        // but we only store the result from getRow(rowIndex-1)
         ArrayList<Integer> result=new ArrayList<Integer>();
-        if (rowIndex<0)
-        {
-            return result;
-        }
-        else if(rowIndex==0)
+        if (rowIndex==0)
         {
             result.add(1);
-            return result;
         }
-        else
+        else if(rowIndex>0)
         {
-            ArrayList<Integer> base=new ArrayList<Integer>();
-            base.add(1);
-            result=new ArrayList<Integer>();
-            for (int i=1; i<=rowIndex; i++)
+            ArrayList<Integer> base=getRow(rowIndex-1);
+            result.add(1);
+            for (int i=1; i<base.size(); i++)
             {
-                result.add(1);
-                for (int j=1; j<i; j++)
-                {
-                    result.add(base.get(j-1)+base.get(j));
-                }
-                result.add(2);
-                base=result;
+                result.add(base.get(i-1)+base.get(i));
             }
-            return result;
+            result.add(1);
         }
+        return result;
     }
 }
