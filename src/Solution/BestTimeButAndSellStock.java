@@ -1,49 +1,29 @@
-package Solution;
-
-public class BestTimeButAndSellStock {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int maxProfit(int[] prices) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // the maximal profit is the maximal gain between buy price and sell price
-        // in addition that, the buy should happen before sell
-        // the algorithm is the follows
-        // let i be the current buy position and j for sell position
-        // initialize i=0; j=1;
-        // iterate the following two steps
-        // j++
-        // find the minimum between [i j)
-        // complexity is o(n)
-        int i=0;
-        int j=1;
-        int max=Integer.MIN_VALUE;
-        if (prices==null || prices.length<1)
+public class Solution {
+    public int maxProfit(int[] prices) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // so we buy at the lowest price and sell at the highest price at the purchase
+        // if the buy-price>sell_price, we don't make any transaction
+        if (prices==null || prices.length<2)
         {
             return 0;
         }
-        for (; j<prices.length; j++)
+        int price_buy=prices[0];
+        int price_sell=prices[1];
+        int profit=0;
+        for (int i=1; i<prices.length; i++)
         {
-            if (prices[i]>prices[j-1])
+            // check whether we have a lower buy price
+            if (price_buy>prices[i-1])
             {
-                i=j-1;
+                price_buy=prices[i-1];
             }
-            if (max<prices[j]-prices[i])
+            price_sell=prices[i];
+            // check whether we have a higher profit
+            if (profit<price_sell-price_buy)
             {
-                max=prices[j]-prices[i];
+                profit=price_sell-price_buy;
             }
         }
-        if (max<0)
-        {
-            max=0;
-        }
-        return max;
+        return profit;
     }
 }
