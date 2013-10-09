@@ -1,61 +1,45 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-
-public class Permutation {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<ArrayList<Integer>> permute(int[] num) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // permute(num[i: end])=union(insert(num[i] to permute(num[i+1:j])
+public class Solution {
+    public ArrayList<ArrayList<Integer>> permute(int[] num) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion permute(num) can be built by insert num to every possible location of each entry in permute(num-1)
         if (num==null || num.length<1)
         {
             return new ArrayList<ArrayList<Integer>>();
         }
-        HashSet<ArrayList<Integer>> result=permute(num, 0);
-        ArrayList<ArrayList<Integer>> arr=new ArrayList<ArrayList<Integer>>(result);
-        return arr;
+        Arrays.sort(num);
+        return permute(num, num.length-1);
     }
     
-    private HashSet<ArrayList<Integer>> permute(int[] num, int start)
-    {
-        HashSet<ArrayList<Integer>> result=new HashSet<ArrayList<Integer>>();
-        if (start>=num.length)
+    private ArrayList<ArrayList<Integer>> permute(int[] num, int end) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion permute(num) can be built by insert num to every possible location of each entry in permute(num-1)
+        ArrayList<ArrayList<Integer>> result=null;
+        if (end<0)
         {
-            return result;
+            result=new ArrayList<ArrayList<Integer>>();
         }
-        else if (start==num.length-1)
+        else if(end==0)
         {
-            // base
+            result=new ArrayList<ArrayList<Integer>>();
             ArrayList<Integer> entry=new ArrayList<Integer>();
-            entry.add(num[start]);
+            entry.add(num[end]);
             result.add(entry);
-            return result;
         }
         else
         {
-            HashSet<ArrayList<Integer>> base=permute(num, start+1);
-            // insert then before
-            for (ArrayList<Integer> entry: base)
+            result=new ArrayList<ArrayList<Integer>>();
+            ArrayList<ArrayList<Integer>> base=permute(num, end-1);
+            ArrayList<Integer> entry=null;
+            for (ArrayList<Integer> element: base)
             {
-                ArrayList<Integer> new_entry;
-                for (int i=0; i<=entry.size(); i++)
+                for (int i=0; i<=end; i++)
                 {
-                    new_entry=new ArrayList<Integer>(entry);
-                    new_entry.add(i, num[start]);
-                    result.add(new_entry);
+                    entry=new ArrayList<Integer>(element);
+                    entry.add(i, num[end]);
+                    result.add(entry);
                 }
             }
-            return result;
         }
+        return result;
     }
 }
