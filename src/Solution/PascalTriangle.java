@@ -1,44 +1,31 @@
-package Solution;
-
-import java.util.ArrayList;
-
-public class PascalTriangle {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PascalTriangle instance=new PascalTriangle();
-		System.out.println(instance.generate(5));
-	}
-
-	public ArrayList<ArrayList<Integer>> generate(int numRows) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
+public class Solution {
+    public ArrayList<ArrayList<Integer>> generate(int numRows) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // it is a recursion
+        ArrayList<ArrayList<Integer>> result;
         if (numRows<1)
         {
-            return result;
+            result=new ArrayList<ArrayList<Integer>>();
         }
-        for (int i=0; i<numRows; i++)
+        else if(numRows==1)
         {
-            ArrayList<Integer> row=new ArrayList<Integer>();
-            if (i==0)
+            ArrayList<Integer> entry=new ArrayList<Integer>();
+            entry.add(1);
+            result=new ArrayList<ArrayList<Integer>>();
+            result.add(entry);
+        }
+        else
+        {
+            result=generate(numRows-1);
+            ArrayList<Integer> entry=new ArrayList<Integer>();
+            ArrayList<Integer> base=result.get(result.size()-1);
+            entry.add(1);
+            for (int i=1; i<base.size(); i++)
             {
-                row.add(1);
+                entry.add(base.get(i-1)+base.get(i));
             }
-            else
-            {
-                row.add(1);
-                for (int j=1; j<i; j++)
-                {
-                    ArrayList<Integer> base=result.get(i-1);
-                    row.add(base.get(j-1)+base.get(j));
-                }
-                row.add(1);
-            }
-            result.add(row);
+            entry.add(1);
+            result.add(entry);
         }
         return result;
     }
