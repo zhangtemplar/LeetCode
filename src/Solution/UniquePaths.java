@@ -1,49 +1,29 @@
-package Solution;
-
-public class UniquePaths {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int uniquePaths(int m, int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we use recursion
-        // f(m, n)=f(m-1,n)+f(m,n-1)
-        // i.e., (m,n) can only be reached from its left or top
-        // we need to use dynamic programming
+public class Solution {
+    public int uniquePaths(int m, int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // dynamic programming
         if (m<1 || n<1)
         {
             return 0;
         }
-        if (m==1 || n==1)
+        int [][]buffer=new int[m][n];
+        // initialization
+        for (int i=m-1; i>=0; i--)
         {
-            return 1;
+            buffer[i][n-1]=1;
         }
-        else
+        for (int j=n-1; j>=0; j--)
         {
-            int [][]result=new int[m][n];
-            for (int i=0; i<m; i++)
-            {
-                result[i][0]=1;
-            }
-            for (int j=0; j<n; j++)
-            {
-                result[0][j]=1;
-            }
-            for (int i=1; i<m; i++)
-            {
-                 for (int j=1; j<n; j++)
-                 {
-                     result[i][j]=result[i-1][j]+result[i][j-1];
-                 }
-            }
-            return result[m-1][n-1];
+            buffer[m-1][j]=1;
         }
+        // progress
+        for (int i=m-2; i>=0; i--)
+        {
+            for (int j=n-2; j>=0; j--)
+            {
+                buffer[i][j]=buffer[i+1][j]+buffer[i][j+1];
+            }
+        }
+        return buffer[0][0];
     }
 }
