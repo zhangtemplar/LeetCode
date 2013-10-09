@@ -1,73 +1,62 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-public class BinaryTreeLevelOrderTraversalII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<ArrayList<Integer>> levelOrderBottom(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use a stack for this purpose
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ArrayList<ArrayList<Integer>> levelOrderBottom(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will save the result of each level to a stack, then push the result to array
         ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
-        ArrayList<ArrayList<Integer>> base=levelOrder(root);
-        for (int i=base.size()-1; i>=0; i--)
-        {
-            result.add(base.get(i));
-        }
-        return result;
-    }
-    
-    public ArrayList<ArrayList<Integer>> levelOrder(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // use level-order traverse
-        ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
-        LinkedList<TreeNode> queue=new LinkedList<TreeNode>();
-        HashMap<TreeNode, Integer> level=new HashMap<TreeNode, Integer>();
-        ArrayList<Integer> value=new ArrayList<Integer>();
         if (root==null)
         {
             return result;
         }
+        // save the result for the leaf to root order
+        Stack<ArrayList<Integer>> stack=new Stack<ArrayList<Integer>>();
+        // the result of each level
+        ArrayList<Integer> array=new ArrayList<Integer>();
+        // the nodes to be visited
+        LinkedList<TreeNode> queue=new LinkedList<TreeNode>();
+        // record the depth of each node
+        HashMap<TreeNode, Integer> depth=new HashMap<TreeNode, Integer>();
+        int current_depth=1;
         queue.add(root);
-        level.put(root, 0);
-        int height=0;
+        depth.put(root, 1);
+        TreeNode node=null;
         while(!queue.isEmpty())
         {
-            TreeNode node=queue.remove();
-            // add its children and their height accordingly
+            node=queue.remove();
+            if (current_depth!=depth.get(node))
+            {
+                // finish a level
+                stack.push(array);
+                array=new ArrayList<Integer>();
+                current_depth=depth.get(node);
+            }
+            array.add(node.val);
             if (node.left!=null)
             {
                 queue.add(node.left);
-                level.put(node.left, level.get(node)+1);
+                depth.put(node.left, depth.get(node)+1);
             }
             if (node.right!=null)
             {
                 queue.add(node.right);
-                level.put(node.right, level.get(node)+1);
+                depth.put(node.right, depth.get(node)+1);
             }
-            // check whether we have finished the level or not
-            if (level.get(node)!=height)
-            {
-                // we finish the previous level
-                // check wheher it is symmetric
-                result.add(value);
-                height=level.get(node);
-                value=new ArrayList<Integer>();
-            }
-            value.add(node.val);
         }
-        result.add(value);
+        // for the leaf level
+        result.add(array);
+        while(!stack.isEmpty())
+        {
+            array=stack.pop();
+            result.add(array);
+        }
         return result;
     }
 }
