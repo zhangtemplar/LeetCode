@@ -1,77 +1,151 @@
-package Solution;
-
-import java.util.Arrays;
-
-public class ThreeSumClosest {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		int []arr={87,6,-100,-19,10,-8,-58,56,14,-1,-42,-45,-17,10,20,-4,13,-17,0,11,-44,65,74,-48,30,-91,13,-53,76,-69,-19,-69,16,78,-56,27,41,67,-79,-2,30,-13,-60,39,95,64,-12,45,-52,45,-44,73,97,100,-19,-16,-26,58,-61,53,70,1,-83,11,-35,-7,61,30,17,98,29,52,75,-73,-73,-23,-75,91,3,-57,91,50,42,74,-7,62,17,-91,55,94,-21,-36,73,19,-61,-82,73,1,-10,-40,11,54,-81,20,40,-29,96,89,57,10,-16,-34,-56,69,76,49,76,82,80,58,-47,12,17,77,-75,-24,11,-45,60,65,55,-89,49,-19,4};
-		System.out.println(threeSumClosest(arr, -275));
-	}
-
-	/**
-     * the idea is similar to 3sum problem, however, with the following differences
-     * if k>0, this means we have find an exact solution, so return it;
-     * otherwise, check the sum with s[-1-k] and s[-2-k] and keep the smaller one
-     */
-    public static int threeSumClosest(int[] num, int target) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int sum=Integer.MAX_VALUE;
+public class Solution {
+    public int threeSumClosest(int[] num, int target) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // a naive solution has complexity of o(N^3)
+        // however an improved version can be follows: 
+        // 0) sort the input array, where the complexity is O(N logN)
+        // 1) we compute the sum of each pair of data, which costs O(N^2)
+        // 2) for each data x of the pairwise sum, use binary search for target-x in the original array, which costs O(logN) each and O(N^2logN) in total
+        // the overall complexity is o(N^2log(N))
+        // the result is either the returned result, or the result after that.
+        // note another method could search in pairwise sum, however the sort of that array also costs O(N^2logN)
+        // and the logic will be much more complex
         if (num==null || num.length<3)
         {
-			return sum;
-		}
-		Arrays.sort(num);
-		for (int i=0; i<num.length-2; i++)
-		{
-			for (int j=i+1; j<num.length-1; j++)
-			{
-				int k=Arrays.binarySearch(num, j+1, num.length, target-num[i]-num[j]);
-				// since we start from the left, we should have already consider the triple with numbers before j
-				if (k>=0)
-				{
-					// we found an exact solution
-					return 0;
-				}
-                // no exaxt solution found
-                // an special case, which we only search for right hand
-                else if (k==-2-j)
+            return target;
+        }
+        // Step 0: sort the array
+        Arrays.sort(num);
+        // Step 1: pair-wise sum
+        // we need to main a hashmap, to avoid the elements used twice
+        int []pair_sum=new int[num.length*(num.length-1)/2];
+        int [][]duplicate=new int[pair_sum.length][2];
+        pairSum(num, pair_sum, duplicate);
+        int sum=0;
+        int min=Integer.MAX_VALUE;
+        int tmp_sum=0;
+        int tmp_min=Integer.MAX_VALUE;
+        int []result=new int[2];
+        // Step 2: find the optimal
+        for (int i=0; i<pair_sum.length; i++)
+        {
+            int index=Arrays.binarySearch(num, target-pair_sum[i]);
+            // note that, index can be negative, which means no exact search can be found
+            if (index>0 && searchAround(num, index, target-pair_sum[i], duplicate[i], result))
+            {
+                tmp_sum=result[1]+pair_sum[i];
+                tmp_min=Math.abs(target-tmp_sum);
+                if (min>tmp_min)
                 {
-                	if (k>=-num.length)
-                	{
-	                    int s1=Math.abs(target-num[-1-k]-num[i]-num[j]);
-	                    if (Math.abs(target-sum)>s1)
-	                    {
-	                        sum=num[-1-k]+num[i]+num[j];
-	                    }
-                	}
+                    min=tmp_min;
+                    sum=tmp_sum;
                 }
-                // the other case
-                else if (k<-num.length)
+            }
+            else
+            {
+                // there is no exact match there
+                // however, do know one thing: the optimal result must be obtained from -1-index or -2-index
+            	if (searchAround(num, -1-index, target-pair_sum[i], duplicate[i], result))
+            	{
+	                tmp_sum=result[1]+pair_sum[i];
+	                tmp_min=Math.abs(target-tmp_sum);
+	                if (min>tmp_min)
+	                {
+	                    min=tmp_min;
+	                    sum=tmp_sum;
+	                }
+            	}
+            	if (searchAround(num, -2-index, target-pair_sum[i], duplicate[i],result))
+            	{
+                tmp_sum=result[1]+pair_sum[i];
+                tmp_min=Math.abs(target-tmp_sum);
+                if (min>tmp_min)
                 {
-                	int s2=Math.abs(target-num[-2-k]-num[i]-num[j]);
-                    sum=num[-2-k]+num[i]+num[j];
+                    min=tmp_min;
+                    sum=tmp_sum;
                 }
-                else
-                {
-                    int s1=Math.abs(target-num[-1-k]-num[i]-num[j]);
-                    int s2=Math.abs(target-num[-2-k]-num[i]-num[j]);
-                    if (Math.abs(target-sum)>s1)
-                    {
-                        sum=num[-1-k]+num[i]+num[j];
-                    }
-                    if (Math.abs(target-sum)>s2)
-                    {
-                        sum=num[-2-k]+num[i]+num[j];
-                    }
-                }
-			}
-		}
-		return sum;
+            	}
+            }
+        }
+        return sum;
+    }
+    
+    private boolean searchAround(int[] num, int index, int target, int []duplicate, int result[])
+    {
+    	boolean flag=false;
+        int min=Integer.MAX_VALUE;
+        int sum=Integer.MAX_VALUE;
+        if (duplicate[1]!=index && duplicate[0]!=index && duplicate[1]!=index && index>=0 && index<num.length)
+        {
+            // we are lucky
+        	flag=true;
+        	int val=Math.abs(target-num[index]);
+            if (min>val)
+            {
+                min=val;
+                sum=num[index];
+            }
+        }
+        // we need to look for the other data, luckily, it can only be index-1 or index+1
+        // if we don't get duplicate again
+        if (duplicate[1]!=index-1 && duplicate[0]!=index-1 && index>=1 && index-1<num.length)
+        {
+        	flag=true;
+            int val=Math.abs(target-num[index-1]);
+            if (min>val)
+            {
+                min=val;
+                sum=num[index-1];
+            }
+        }
+        if (duplicate[1]!=index+1 && duplicate[0]!=index+1 && index+1<num.length && index+1>=0)
+        {
+        	flag=true;
+            int val=Math.abs(target-num[index+1]);
+            if (min>val)
+            {
+                min=val;
+                sum=num[index+1];
+            }
+        }
+        // for safety, check index-2, index+2 also
+        if (duplicate[1]!=index-2 && duplicate[0]!=index-2 && index>=2 && index-2<num.length)
+        {
+        	flag=true;
+            int val=Math.abs(target-num[index-2]);
+            if (min>val)
+            {
+                min=val;
+                sum=num[index-2];
+            }
+        }
+        if (duplicate[1]!=index+2 && duplicate[0]!=index+2 && index+2<num.length && index+2>=0)
+        {
+        	flag=true;
+            int val=Math.abs(target-num[index+2]);
+            if (min>val)
+            {
+                min=val;
+                sum=num[index+2];
+            }
+        }
+        result[0]=min;
+        result[1]=sum;
+        return flag;
+    }
+    
+    private void pairSum(int []num, int []result, int[][] duplicate)
+    {
+        int k=0;
+        for (int i=0; i<num.length; i++)
+        {
+            for (int j=i+1; j<num.length; j++)
+            {
+                // add in the utilization information
+                duplicate[k][0]=i;
+                duplicate[k][1]=j;
+                result[k++]=num[i]+num[j];
+            }
+        }
     }
 }
