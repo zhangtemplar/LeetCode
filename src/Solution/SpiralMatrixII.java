@@ -1,56 +1,41 @@
-package Solution;
-
-public class SpiralMatrixII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int[][] generateMatrix(int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public int[][] generateMatrix(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
         if (n<1)
         {
             return new int[0][0];
         }
-        int [][]matrix=new int[n][n];
-        int spiral=n/2;
-        // the main algorithm
-        // this should work with the case m is even
-        int i;
+        int round=n/2;
+        int [][]result=new int[n][n];
         int k=1;
-        for (i=0; i<spiral; i++)
+        for (int i=0; i<round; i++)
         {
-            // for left-right
+            // left to right
             for (int j=i; j<n-i-1; j++)
             {
-                matrix[i][j]=k++;
+                result[i][j]=k++;
             }
-            // for top-down
+            // top to down
             for (int j=i; j<n-i-1; j++)
             {
-                matrix[j][n-i-1]=k++;
+                result[j][n-i-1]=k++;
             }
-            // for right-left
+            // right to left
             for (int j=n-i-1; j>i; j--)
             {
-                matrix[n-i-1][j]=k++;
+                result[n-i-1][j]=k++;
             }
-            // for bottom-top
+            // bottom to top
             for (int j=n-i-1; j>i; j--)
             {
-                matrix[j][i]=k++;
+                result[j][i]=k++;
             }
         }
-        // post-processing, check the special case, where m is odd
-        if (n/2*2!=n)
+        // for the center
+        if (2*round!=n)
         {
-            matrix[i][i]=k;
+            result[round][round]=k;
         }
-        return matrix;
+        return result;
     }
 }
