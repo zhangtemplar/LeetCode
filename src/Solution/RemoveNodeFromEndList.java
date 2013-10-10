@@ -1,59 +1,45 @@
-package Solution;
-
-import java.util.LinkedList;
-
-public class RemoveNodeFromEndList {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ListNode removeNthFromEnd(ListNode head, int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // the idea is, we maintain a queue of size n
-        // we scan the list, add any node we met,
-        // if the queue is full, delete the head
-        // finally, set the next field of the latest remove node to null
-        if (n<1)
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will maintain two pointers:
+        // prev:    the previous of the node to be deleted
+        // tail:    the end of the node
+        if (head==null)
         {
-            // illegal input
             return head;
         }
-        LinkedList<ListNode> queue=new LinkedList<ListNode>();
-        ListNode node, node_deleted;
-        node=head;
-        node_deleted=null;
-        while(node!=null)
+        ListNode result=new ListNode(0);
+        result.next=head;
+        ListNode prev=result;
+        ListNode tail=result;
+        while(n>0 && tail!=null)
         {
-            if (queue.size()<n)
-            {
-                queue.add(node);
-            }
-            else
-            {
-                node_deleted=queue.remove();
-                queue.add(node);
-            }
-            node=node.next;
+            tail=tail.next;
+            n--;
         }
-        if (node_deleted!=null)
+        // to make sure the list is long enough
+        if (n>0 || tail==null)
         {
-            // if node_deleted==null
-            // the size of list is small or equal to n
-            // so we will do nothing
-            // otherwise, we just the next of its prevous to its next
-            node_deleted.next=node_deleted.next.next;
+            return result.next;
         }
-        else if (queue.size()==n)
+        // move to the target location
+        while(tail.next!=null)
         {
-            // when |list|==n
-            return head.next;
+            prev=prev.next;
+            tail=tail.next;
         }
-        return head;
+        prev.next=prev.next.next;
+        return result.next;
     }
 }
