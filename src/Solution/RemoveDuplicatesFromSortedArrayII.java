@@ -1,55 +1,28 @@
-package Solution;
-
-import java.util.HashMap;
-
-public class RemoveDuplicatesFromSortedArrayII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int removeDuplicates(int[] A) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use hashmap, where the key is the value and the value is frequence
-        if (A==null || A.length<2)
+public class Solution {
+    public int removeDuplicates(int[] A) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // the idea would be very similar
+        if (A==null || A.length<1)
         {
-            return A.length;
+            return 0;
         }
-        HashMap<Integer, Integer> set=new HashMap<Integer, Integer>();
-        int result=2;
-        set.put(A[0], 1);
-        if (A[0]==A[1])
+        int available=0;
+        for (int i=0; i<A.length; i++)
         {
-            set.put(A[0], 2);
-        }
-        else
-        {
-            set.put(A[1], 1);
-        }
-        // start the processing
-        for (int i=2; i<A.length; i++)
-        {
-            if (!set.containsKey(A[i]))
+            if (available<=0 || A[i]!=A[available-1])
             {
-                // the result is not found
-                A[result]=A[i];
-                set.put(A[i], 1);
-                result++;
+                // not a duplicate
+                A[available]=A[i];
+                available++;
             }
-            else if (set.get(A[i])<2)
+            else if(available<=1 || A[i]!=A[available-2])
             {
-                // the result is only found once
-                set.put(A[i], set.get(A[i])+1);
-                A[result]=A[i];
-                result++;
+                // first duplicate
+                A[available]=A[i];
+                available++;
             }
-            // the result is found more than twice
+            // the second duplicate, overwrite it
         }
-        return result;
+        return available;
     }
 }
