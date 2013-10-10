@@ -1,39 +1,31 @@
-package Solution;
-
-public class PathSum {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public boolean hasPathSum(TreeNode root, int sum) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public boolean hasPathSum(TreeNode root, int sum) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion
+        // we reach a leaf
         if (root==null)
         {
             return false;
         }
-        sum=sum-root.val;
         if (root.left==null && root.right==null)
         {
-            if (sum==0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return sum==root.val;
         }
-        if (hasPathSum(root.left, sum))
+        // otherwise, check its children
+        else if (root.left!=null && hasPathSum(root.left, sum-root.val))
         {
             return true;
         }
-        else if(hasPathSum(root.right, sum))
+        else if(root.right!=null && hasPathSum(root.right, sum-root.val))
         {
             return true;
         }
