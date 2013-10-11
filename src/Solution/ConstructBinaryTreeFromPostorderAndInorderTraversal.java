@@ -1,64 +1,49 @@
-package Solution;
-
-import java.util.HashMap;
-
-public class ConstructBinaryTreeFromPostorderAndInorderTraversal {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public TreeNode buildTree(int[] inorder, int[] postorder) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // in-order: left node right
-        // pre-order: node left right
-        // post-order: left right node
-        // the idea is similar the previous except that, the root is always at the end
-        // for the postorder
-        if (postorder==null || postorder.length<1 || inorder==null || inorder.length<1 || postorder.length!=inorder.length)
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we know in inorder traverse, the root is in the middle (i.e., seperate the left and right subtree)
+        // in postorder traverse, the root is always in the end
+        // we can use the root obtained in postorder, to find the separator of left and right subtree
+        if (inorder==null || postorder==null || inorder.length<1 || postorder.length<1 || inorder.length!=postorder.length)
         {
             return null;
         }
-        TreeNode root=new TreeNode(postorder[postorder.length-1]);
-        // search the root in the inorder array
-        HashMap<Integer, Integer> table=new HashMap<Integer, Integer>();
-        for (int i=0; i<inorder.length; i++)
-        {
-            table.put(inorder[i], i);
-        }
-        // search the root in the inorder array
-        int i=table.get(root.val);
-        root.left=buildTree(postorder, 0, i-1, table, 0, i-1);
-        root.right=buildTree(postorder, i, postorder.length-2, table, i+1, inorder.length-1);
-        return root;
+        return buildTree(inorder, 0, inorder.length-1, postorder, 0, postorder.length-1);
     }
     
-    /**
-     * root: the root of current subtree
-     * preorder[start1:end1] the subarray we are processing
-     * inorder[start1:end2] the subarray we processing
-     */
-    private TreeNode buildTree(int []postorder, int start1, int end1, HashMap<Integer, Integer> table, int start2, int end2)
+    private TreeNode buildTree(int[] inorder, int instart, int inend, int[] postorder, int poststart, int postend)
     {
-        if (start1>end1)
-        {
-            return null;
-        }
-        TreeNode root=new TreeNode(postorder[end1]);
+        TreeNode root=new TreeNode(postorder[postend]);
         // this is a leaf node
-        if (start1==end1 || start2==end2)
+        if (instart==inend)
         {
             return root;
         }
-        // otherwise, repeat what we have before
-        int i=table.get(root.val);
-        root.left=buildTree(postorder, start1, i+start1-start2-1, table, start2, i-1);
-        root.right=buildTree(postorder, i+start1-start2, end1-1, table, i+1, end2);
+        // search the root
+        int middle=Arrays.binarySearch(inorder, instart, inend+1, postorder[postend]);
+        if (middle<0)
+        {
+            // the root can't be found, some errors there
+            return root;
+        }
+        // we build the left tree and right tree accordingly.
+        if (instart<middle)
+        {
+            root.left=buildTree(inorder, instart, middle-1, postorder, poststart, middle-1-instart+poststart);
+        }
+        if (middle<inend)
+        {
+            root.right=buildTree(inorder, middle+1, inend, postorder, postend-inend+middle, postend-1);
+        }
         return root;
     }
 }
