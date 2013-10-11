@@ -1,52 +1,36 @@
-package Solution;
-
-public class LongestCommonPrefix {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String []strs={"aa", "aa"};
-		System.out.println("longest common prefix for [aa, aa]="+longestCommonPrefix(strs));
-	}
-
-	public static String longestCommonPrefix(String []strs)
-	{
-		// Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
         if (strs==null || strs.length<1)
         {
             return new String("");
         }
-        if (strs[0]==null)
+        int i=0;
+        for (i=0; i<strs[0].length(); i++)
         {
-            return new String("");
-        }
-        char []str=strs[0].toCharArray();
-    	int j=str.length-1;
-        int k;
-		for (int i=1; i<strs.length; i++)
-		{
-            j=j>(strs[i].length()-1)?(strs[i].length()-1):j;
-            for (k=j; k>=0; k--)
+            char c=strs[0].charAt(i);
+            for(String str: strs)
             {
-                if (str[k]!=strs[i].charAt(k))
+                if (i>=str.length() || str.charAt(i)!=c)
                 {
-                    j=k-1;
+                    if (i>0)
+                    {
+                        return strs[0].substring(0, i);
+                    }
+                    else
+                    {
+                        return new String("");
+                    }
                 }
             }
-            if (j<0)
-            {
-                break;
-            }
-		}
-        if (j>=0)
-        {
-		    return new String(str, 0, j+1);
         }
+        if (i>0)
+        {
+            return strs[0].substring(0, i);
+        }
+        else
         {
             return new String("");
         }
-	}
+    }
 }
