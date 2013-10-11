@@ -1,25 +1,6 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-public class Subsets {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Subsets instance=new Subsets();
-		int []S={1, 2, 3};
-		System.out.println(instance.subsets(S));
-	}
-
-	public ArrayList<ArrayList<Integer>> subsets(int[] S) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we still use recursion
-        // subsets(S[0:n])=S[n-1] U {subsets(S[0:n-1] x S[n-1]} U subsets(S[0:n-1]
+public class Solution {
+    public ArrayList<ArrayList<Integer>> subsets(int[] S) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
         if (S==null || S.length<1)
         {
             return new ArrayList<ArrayList<Integer>>();
@@ -28,29 +9,29 @@ public class Subsets {
         return subsets(S, S.length-1);
     }
     
-    private ArrayList<ArrayList<Integer>> subsets(int[] S, int n)
+    private ArrayList<ArrayList<Integer>> subsets(int[] S, int end)
     {
         ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
-        if (n<0)
+        if (end==0)
         {
             ArrayList<Integer> entry=new ArrayList<Integer>();
+            entry.add(S[end]);
             result.add(entry);
-            return result;
+            entry=new ArrayList<Integer>();
+            result.add(entry);
         }
         else
         {
-            ArrayList<ArrayList<Integer>> base=subsets(S, n-1);
-            for (ArrayList<Integer> entry: base)
+            ArrayList<ArrayList<Integer>> base=subsets(S, end-1);
+            result.addAll(base);
+            ArrayList<Integer> entry=null;
+            for (ArrayList<Integer> element: base)
             {
+                entry=new ArrayList<Integer>(element);
+                entry.add(S[end]);
                 result.add(entry);
             }
-            for (ArrayList<Integer> entry: base)
-            {
-                ArrayList<Integer> new_entry=new ArrayList<Integer>(entry);
-                new_entry.add(S[n]);
-                result.add(new_entry);
-            }
-            return result;
         }
+        return result;
     }
 }
