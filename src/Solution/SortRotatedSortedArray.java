@@ -1,21 +1,8 @@
-package Solution;
-
-public class SortRotatedSortedArray {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int search(int[] A, int target) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we still use the binary search
-        // no matter how many and whether the rotation are
-        // there is only one break point, otherwise it is the same as binary search in sorted
+public class Solution {
+    public int search(int[] A, int target) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we still use binary search
+        // the only trick here is that, we need to be aware of the half, which contains the rotation
         if (A==null || A.length<1)
         {
             return -1;
@@ -25,12 +12,8 @@ public class SortRotatedSortedArray {
     
     private int search(int []A, int start, int end, int target)
     {
-        // basic case
-        if (start>end)
-        {
-            return -1;
-        }
-        else if (start==end)
+        // base case
+        if (start==end)
         {
             if (A[start]==target)
             {
@@ -41,55 +24,36 @@ public class SortRotatedSortedArray {
                 return -1;
             }
         }
-        // the other, we apply the binary search
         int middle=(start+end)/2;
-        int result=-1;
-        // for the left part
-        // we need to search it
-        if (A[start]<A[middle])
+        if (A[middle]==target)
         {
-            // left half is sorted
-            if (A[start]<=target && A[middle]>=target)
+            return middle;
+        }
+        else 
+        {
+            int result=-1;
+            // search in the left half
+            // if middle is larger than target or there is rotation in the left half
+            if(A[middle]>target || A[start]>=A[middle])
             {
-                result=search(A, start, middle, target);
-                if (result>-1)
+                if (start<middle)
                 {
-                    return result;
+                    result=search(A, start, middle-1, target);
+                    if (result>=0)
+                    {
+                        return result;
+                    }
                 }
             }
-        }
-        else
-        {
-            // we need to search it, no matter how
-            result=search(A, start, middle, target);
-            if (result>-1)
-            {
-                return result;
-            }
-        }
-        // for the right part
-        // we need to search it
-        if (A[middle+1]<A[end])
-        {
-            // left half is sorted
-            if (A[middle+1]<=target && A[end]>=target)
+            if(A[middle]<target || A[end]<=A[middle])
             {
                 result=search(A, middle+1, end, target);
-                if (result>-1)
+                if (result>=0)
                 {
                     return result;
                 }
             }
+            return result;
         }
-        else
-        {
-            // we need to search it, no matter how
-            result=search(A, middle+1, end, target);
-            if (result>-1)
-            {
-                return result;
-            }
-        }
-        return result;
     }
 }
