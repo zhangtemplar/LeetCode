@@ -1,71 +1,45 @@
-package Solution;
-
-import java.util.Stack;
-
-public class ValidParentheses {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public boolean isValid(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use a stack for this problem:
-        // if we meet left parentheses, we push into the stack
-        // else if we meet right parentheses, we pop the stack
-        //      if the poped out element matches, continue;
-        //      otherwise return false
-        // otherwise return false
+public class Solution {
+    public boolean isValid(String s) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we may use a stack for this purpose, whenever we see (, [, or {, we push into the stack
+        // whenever we see a ), ], }, we check the stack, if there is corresponding (, [, or { in
+        // the top, we pop it out, otherwise report error. Finally, check whether the stack is empty
+        // or not
         if (s==null || s.length()<1)
         {
             return true;
         }
         Stack<Character> stack=new Stack<Character>();
-        char s_new, s_prev;
+        HashMap<Character, Character> match=new HashMap<Character, Character>();
+        match.put(')', '(');
+        match.put(']', '[');
+        match.put('}', '{');
+        match.put('(', ')');
+        match.put('[', ']');
+        match.put('{', '}');
         for (int i=0; i<s.length(); i++)
         {
-            s_new=s.charAt(i);
-            if (patterns[s_new]<0)
+            char c=s.charAt(i);
+            if (c=='(' || c=='[' || c=='{')
             {
-                // left one
-                stack.push(s_new);
+                stack.push(c);
             }
-            else if (patterns[s_new]>0)
+            else if (c==')' || c==']' || c=='}')
             {
-                // right one, check whether it matches with top of the stack
-                if (stack.isEmpty())
+                if (stack.isEmpty() || !match.get(c).equals(stack.peek()))
                 {
-                    // the stack is empty, an error case
                     return false;
                 }
                 else
                 {
-                    s_prev=stack.pop();
-                    if (patterns[s_new]+patterns[s_prev]!=0)
-                    {
-                        // don't match
-                        return false;
-                    }
-                    // otherwise continue;
+                    stack.pop();
                 }
             }
             else
             {
-                // illegal letter
                 return false;
             }
         }
-        // finally check the stack, if is not empty, return false;
         return stack.isEmpty();
     }
-    
-    private static final int[]patterns={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    -1,+1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    -2,0,+2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    -3,0,+3,0,0};
 }
