@@ -1,28 +1,8 @@
-package Solution;
-
-public class SortRotatedSortedArrayII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * the algorithm is the same as SortRotatedSortedArray, since we didn't make any assumptions
-	 * regarding duplicates there.
-	 * @param A
-	 * @param target
-	 * @return
-	 */
-	public boolean search(int[] A, int target) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we still use the binary search
-        // no matter how many and whether the rotation are
-        // there is only one break point, otherwise it is the same as binary search in sorted
+public class Solution {
+    public boolean search(int[] A, int target) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we still use binary search
+        // the only trick here is that, we need to be aware of the half, which contains the rotation
         if (A==null || A.length<1)
         {
             return false;
@@ -32,71 +12,35 @@ public class SortRotatedSortedArrayII {
     
     private boolean search(int []A, int start, int end, int target)
     {
-        // basic case
-        if (start>end)
+        // base case
+        if (start==end)
         {
+            return A[start]==target;
+        }
+        int middle=(start+end)/2;
+        if (A[middle]==target)
+        {
+            return true;
+        }
+        else 
+        {
+            // search in the left half
+            // if middle is larger than target or there is rotation in the left half
+            if(A[middle]>target || A[start]>=A[middle])
+            {
+                if (start<middle && search(A, start, middle-1, target))
+                {
+                    return true;
+                }
+            }
+            if(A[middle]<target || A[end]<=A[middle])
+            {
+                if (search(A, middle+1, end, target))
+                {
+                    return true;
+                }
+            }
             return false;
         }
-        else if (start==end)
-        {
-            if (A[start]==target)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        // the other, we apply the binary search
-        int middle=(start+end)/2;
-        boolean result=false;
-        // for the left part
-        // we need to search it
-        if (A[start]<A[middle])
-        {
-            // left half is sorted
-            if (A[start]<=target && A[middle]>=target)
-            {
-                result=search(A, start, middle, target);
-                if (result)
-                {
-                    return result;
-                }
-            }
-        }
-        else
-        {
-            // we need to search it, no matter how
-            result=search(A, start, middle, target);
-            if (result)
-            {
-                return result;
-            }
-        }
-        // for the right part
-        // we need to search it
-        if (A[middle+1]<A[end])
-        {
-            // left half is sorted
-            if (A[middle+1]<=target && A[end]>=target)
-            {
-                result=search(A, middle+1, end, target);
-                if (result)
-                {
-                    return result;
-                }
-            }
-        }
-        else
-        {
-            // we need to search it, no matter how
-            result=search(A, middle+1, end, target);
-            if (result)
-            {
-                return result;
-            }
-        }
-        return false;
     }
 }
