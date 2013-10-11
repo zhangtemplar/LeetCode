@@ -1,51 +1,41 @@
-package Solution;
-
-import java.util.HashMap;
-
-public class SumRootToLeafNumber {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		SumRootToLeafNumber instance=new SumRootToLeafNumber();
-		TreeNode root=new TreeNode(0);
-		root.left=new TreeNode(1);
-		root.right=new TreeNode(3);
-		System.out.println(instance.sumNumbers(root));
-	}
-
-	public int sumNumbers(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public int sumNumbers(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // sounds like a recursion
         if (root==null)
         {
             return 0;
         }
-        buffer=new HashMap<TreeNode, Long>();
-        buffer.put(root, (long) root.val);
-        return (int) sumNumbers(root, 0);
+        return sumNumbers(root, 0);
     }
     
-    private long sumNumbers(TreeNode root, long base)
+    private int sumNumbers(TreeNode root, int sum)
     {
+        // leaf node
         if (root.left==null && root.right==null)
         {
-            return base+buffer.get(root);
+            return sum*10+root.val;
         }
+        // otherwise
+        sum=sum*10+root.val;
+        int result=0;
         if (root.left!=null)
         {
-            buffer.put(root.left, buffer.get(root)*10+root.left.val);
-            base=sumNumbers(root.left, base);
+            result+=sumNumbers(root.left, sum);
         }
         if (root.right!=null)
         {
-            buffer.put(root.right, buffer.get(root)*10+root.right.val);
-            base=sumNumbers(root.right, base);
+            result+=sumNumbers(root.right, sum);
         }
-        return base;
+        return result;
     }
-    
-    private HashMap<TreeNode, Long>buffer;
 }
