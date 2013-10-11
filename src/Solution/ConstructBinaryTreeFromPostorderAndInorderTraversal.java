@@ -29,11 +29,15 @@ public class Solution {
             return root;
         }
         // search the root
-        int middle=Arrays.binarySearch(inorder, instart, inend+1, postorder[postend]);
-        if (middle<0)
+        /* the tree is not necessary a binary search tree, i.e., inorder can be not sorted*/
+        int middle=-1;
+        for (int i=instart; i<=inend; i++)
         {
-            // the root can't be found, some errors there
-            return root;
+             if (inorder[i]==postorder[postend])
+             {
+                 middle=i;
+                 break;
+             }
         }
         // we build the left tree and right tree accordingly.
         if (instart<middle)
