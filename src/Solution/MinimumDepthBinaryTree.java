@@ -1,50 +1,36 @@
-package Solution;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-
-public class MinimumDepthBinaryTree {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int minDepth(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use BFS
-        LinkedList<TreeNode> queue=new LinkedList<TreeNode>();
-        HashMap<TreeNode, Integer> level=new HashMap<TreeNode, Integer>();
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public int minDepth(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
         if (root==null)
         {
             return 0;
         }
-        queue.add(root);
-        level.put(root, 1);
-        TreeNode node=null;
-        while(!queue.isEmpty())
+        else if(root.left==null && root.right==null)
         {
-            node=queue.remove();
-            if (node.left==null && node.right==null)
-            {
-                break;
-            }
-            // add its children and their height accordingly
-            if (node.left!=null)
-            {
-                queue.add(node.left);
-                level.put(node.left, level.get(node)+1);
-            }
-            if (node.right!=null)
-            {
-                queue.add(node.right);
-                level.put(node.right, level.get(node)+1);
-            }
+            return 1;
         }
-        return level.get(node);
+        else if(root.left==null)
+        {
+            return minDepth(root.right)+1;
+        }
+        else if(root.right==null)
+        {
+            return minDepth(root.left)+1;
+        }
+        else
+        {
+            int depth_left=minDepth(root.left)+1;
+            int depth_right=minDepth(root.right)+1;
+            return depth_left<depth_right?depth_left:depth_right;
+        }
     }
 }
