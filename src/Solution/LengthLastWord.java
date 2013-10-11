@@ -1,44 +1,30 @@
-package Solution;
-
-public class LengthLastWord {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-	}
-
-	public int lengthOfLastWord(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public int lengthOfLastWord(String s) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we can search from the end of the string
         if (s==null || s.length()<1)
         {
             return 0;
         }
-        int prev_char=s.length()-1;
-        // the flag for detection of a non-space char
-        boolean flag=false;
-        int i;
+        int word_detect=-1;
+        int i=0;
         for (i=s.length()-1; i>=0; i--)
         {
+            // space detected
             if (s.charAt(i)==' ')
             {
-                // it is a space
-                if (flag)
+                // we have detect a word
+                if (word_detect>=0)
                 {
-                    return prev_char-i;
-                }
-                else
-                {
-                    prev_char=i-1;
+                    return word_detect-i;
                 }
             }
-            else
+            else if (word_detect<0)
             {
-                flag=true;
+                word_detect=i;
             }
         }
-        return prev_char-i;
+        // no word detected (word_detect=-1) or there is only one word there
+        return word_detect-i;
     }
 }
