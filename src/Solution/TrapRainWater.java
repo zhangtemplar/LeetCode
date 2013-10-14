@@ -1,20 +1,8 @@
-package Solution;
-
-public class TrapRainWater {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		TrapRainWater instance=new TrapRainWater();
-		int []A={0, 2, 0};
-		System.out.println(instance.trap(A));
-	}
-
-	public int trap(int[] A) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public int trap(int[] A) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // the water can be hold is the difference between the elevation of current location
+        // to the minimal of elevation of left maximal and right maximal
         if (A==null || A.length<3)
         {
             return 0;
@@ -23,38 +11,22 @@ public class TrapRainWater {
         left[0]=A[0];
         for (int i=1; i<A.length; i++)
         {
-            if (left[i-1]>A[i])
-            {
-                left[i]=left[i-1];
-            }
-            else
-            {
-                left[i]=A[i];
-            }
+            left[i]=A[i]>left[i-1]?A[i]:left[i-1];
         }
         int []right=new int[A.length];
         right[A.length-1]=A[A.length-1];
         for (int i=A.length-2; i>=0; i--)
         {
-            if (right[i+1]>A[i])
-            {
-                right[i]=right[i+1];
-            }
-            else
-            {
-                right[i]=A[i];
-            }
+            right[i]=A[i]>right[i+1]?A[i]:right[i+1];
         }
-        int result=0;
-        int tmp;
+        int water=0;
         for (int i=1; i<A.length-1; i++)
         {
-            tmp=(left[i-1]>right[i+1]?right[i+1]:left[i-1])-A[i];
-            if (tmp>0)
+            if (A[i]<left[i] && A[i]<right[i])
             {
-                result+=tmp;
+                water+=(left[i]<right[i]?left[i]:right[i])-A[i];
             }
         }
-        return result;
+        return water;
     }
 }
