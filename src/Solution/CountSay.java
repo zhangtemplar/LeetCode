@@ -1,53 +1,37 @@
-package Solution;
-
-public class CountSay {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String countAndSay(int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we can use recursion
-        if (n<=0)
+public class Solution {
+    public String countAndSay(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion
+        if (n<1)
         {
             return new String("");
         }
-        else if (n==1)
+        else if(n==1)
         {
             return new String("1");
         }
         else
         {
-            String base=countAndSay(n-1);
             StringBuffer result=new StringBuffer();
-            int i=1;
-            char previous=base.charAt(0);
+            String base=countAndSay(n-1);
             int count=1;
-            while(i<base.length())
+            int i=0;
+            for (i=1; i<base.length(); i++)
             {
-                if (base.charAt(i)==previous)
+                if (base.charAt(i)!=base.charAt(i-1))
                 {
-                    count++;
-                    i++;
+                    result.append(count);
+                    result.append(base.charAt(i-1));
+                    count=1;
                 }
                 else
                 {
-                    result.append(count);
-                    result.append(previous);
-                    count=1;
-                    previous=base.charAt(i);
-                    i++;
+                    count++;
                 }
             }
-            // check the end
+            // for the last one
             result.append(count);
-            result.append(previous);
+            result.append(base.charAt(i-1));
             return result.toString();
         }
     }
