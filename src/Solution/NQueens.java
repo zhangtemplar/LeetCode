@@ -1,118 +1,68 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-public class NQueens {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		NQueens instance=new NQueens();
-		ArrayList<String[]> result=instance.solveNQueens(4);
-		for (String[] strs: result)
-		{
-			for (String str: strs)
-			{
-				System.out.println(str);
-			}
-			System.out.println("\n\n");
-		}
-	}
-
-	public ArrayList<String[]> solveNQueens(int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        if (n<0)
+public class Solution {
+    public ArrayList<String[]> solveNQueens(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use backtrace
+        // for N queen problem, we know that, each row/column will have one queen
+        // for from Row 0 to Row n-1, we place the queen on the position which dosen't
+        // conflict with all the previous queens. If we made to n, we save the result
+        if (n<1)
         {
             return new ArrayList<String[]>();
         }
-        else if (n==1)
-        {
-            ArrayList<String[]> result=new ArrayList<String[]>();
-            String[] strs={"Q"};
-            result.add(strs);
-            return result;
-        }
-        else
-        {
-            // for the other cases
-            ArrayList<String[]> result=new ArrayList<String[]>();
-            for (int i=0; i<n; i++)
-            {
-                String[] strs=new String[n];
-                char[] str=new char[n];
-                Arrays.fill(str, '.');
-                str[i]='Q';
-                strs[0]=new String(str);
-                result.addAll(solveNQueens(0, strs));
-            }
-            return result;
-        }
+        // this variable stores the location of the n queen
+        int []location=new int[n];
+        return solveNQueens(location, 0);
     }
     
     /**
-     * this function finds the valid pattern given exsting result from 0-th to row-th row
-     */
-    private ArrayList<String[]> solveNQueens(int row, String[] strs)
+     * we store the location of the current queens in location
+     * current indicates the index of queens we are currently looking at
+     * If current==location.length, we got one solution
+     */ 
+    private ArrayList<String[]> solveNQueens(int []location, int current)
     {
         ArrayList<String[]> result=new ArrayList<String[]>();
-        if (row>=strs.length-1)
+        if (current>=location.length)
         {
-            // we have finished
-        	result.add(strs);
+            // create the result
+            result.add(createResult(location));
         }
         else
         {
-            // try every possible position of current 
-            for (int i=0; i<strs.length; i++)
+            // for each possible location, we check its compatibility of the previous queens
+            for (int i=0; i<location.length; i++)
             {
-                if (isValid(strs, row+1, i))
+                boolean flag=true;
+                for (int j=0; j<current; j++)
                 {
-                    // this is valid solution
-                    String []new_strs=(String [])Arrays.copyOf(strs, strs.length);
-                    char []str=new char[strs.length];
-                    Arrays.fill(str, '.');
-                    str[i]='Q';
-                    new_strs[row+1]=new String(str);
-                    result.addAll(solveNQueens(row+1, new_strs));
+                    // column, 45 diagnoal, 135 diagnoal
+                    if (i==location[j] || i-current==location[j]-j || i+current==location[j]+j)
+                    {
+                        flag=false;
+                        break;
+                    }
+                }
+                // we have a valid location, then check the next one
+                if (flag)
+                {
+                    location[current]=i;
+                    result.addAll(solveNQueens(location, current+1));
                 }
             }
         }
         return result;
     }
     
-    // check whether current location is valid or not
-    private boolean isValid(String []strs, int row, int col)
+    private String[] createResult(int[] location)
     {
-        // check the same column
-        for (int i=0; i<row; i++)
+        String []board=new String[location.length];
+        for (int i=0; i<location.length; i++)
         {
-            if (strs[i].charAt(col)=='Q')
-            {
-                return false;
-            }
+            char[] result=new char[location.length];
+            Arrays.fill(result, '.');
+            result[location[i]]='Q';
+            board[i]=new String(result);
         }
-        // check the \ diganoal
-        for (int i=0; i<row; i++)
-        {
-            int j=col+i-row;
-            if (j>=0 && j<strs.length && strs[i].charAt(j)=='Q')
-            {
-                return false;
-            }
-        }
-        // check the / diganoal
-        for (int i=0; i<row; i++)
-        {
-            int j=col+row-i;
-            if (j>=0 && j<strs.length && strs[i].charAt(j)=='Q')
-            {
-                return false;
-            }
-        }
-        return true;
+        return board;
     }
 }
