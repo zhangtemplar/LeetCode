@@ -1,90 +1,77 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-public class UniqueBinarySearchTreesII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		UniqueBinarySearchTreesII instance=new UniqueBinarySearchTreesII();
-		ArrayList<TreeNode> result=instance.generateTrees(3);
-		System.out.println(result);
-	}
-
-	public ArrayList<TreeNode> generateTrees(int n) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use recursion/dymaic programming
-        // however, at each level of node, we are not storing the actual
-        // value but its index in the least
-        buffer=new HashMap<Integer, ArrayList<TreeNode>>();
-        return subGenerateTrees(n);
-    }
-    
-    private HashMap<Integer, ArrayList<TreeNode>> buffer;
-    
-    private ArrayList<TreeNode> subGenerateTrees(int n) 
-    {
-        ArrayList<TreeNode> result=new ArrayList<TreeNode>();
-        if (buffer.containsKey(n))
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; left = null; right = null; }
+ * }
+ */
+public class Solution {
+    public ArrayList<TreeNode> generateTrees(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will dynamic programming as the previous problem
+        if (n<1)
         {
-            return buffer.get(n);
-        }
-        else if (n<1)
-        {
-            // do nothing
+            ArrayList<TreeNode> result=new ArrayList<TreeNode>();
             result.add(null);
-        }
-        else if (n==1)
-        {
-            TreeNode node=new TreeNode(1);
-            result.add(node);
+            return result;
         }
         else
         {
-            for (int i=0; i<n; i++)
+            return generateTrees(1, n);
+        }
+    }
+    
+    private ArrayList<TreeNode> generateTrees(int start, int end)
+    {
+        ArrayList<TreeNode> result=new ArrayList<TreeNode>();
+        if (start==end)
+        {
+            result.add(new TreeNode(start));
+        }
+        else if (start<end)
+        {
+            for (int i=start; i<=end; i++)
             {
-                ArrayList<TreeNode> left=subGenerateTrees(i);
-                ArrayList<TreeNode> right=subGenerateTrees(n-i-1);
-                for (TreeNode ltree: left)
+                // root is built with i
+                // left subtree is built with start:i-1
+                ArrayList<TreeNode> left=generateTrees(start, i-1);
+                // right subtree is built with i+1:end
+                ArrayList<TreeNode> right=generateTrees(i+1, end);
+                // mix the trees
+                if (!left.isEmpty() && !right.isEmpty())
                 {
-                    for (TreeNode rtree: right)
+                    for(TreeNode lnode: left)
                     {
-                        TreeNode root=new TreeNode(i+1);
-                        // left tree is built with value 1 to i
-                        root.left=assignValue(ltree, 1);
-                        // right tree is built with value i+2 to n
-                        root.right=assignValue(rtree, i+2);
+                        for (TreeNode rnode: right)
+                        {
+                            TreeNode root=new TreeNode(i);
+                            root.left=lnode;
+                            root.right=rnode;
+                            result.add(root);
+                        }
+                    }
+                }
+                else if(!left.isEmpty())
+                {
+                    for (TreeNode lnode: left)
+                    {
+                        TreeNode root=new TreeNode(i);
+                        root.left=lnode;
+                        result.add(root);
+                    }
+                }
+                else if(!right.isEmpty())
+                {
+                    for(TreeNode rnode: right)
+                    {
+                        TreeNode root=new TreeNode(i);
+                        root.right=rnode;
                         result.add(root);
                     }
                 }
             }
-            
-        }
-        buffer.put(n, result);
-        return result;
-    }
-    
-    // this function perform a deep copy of the orginal tree and assgin propiate value to the tree
-    private TreeNode assignValue(TreeNode root, int start)
-    {
-    	if (root==null)
-    	{
-    		return null;
-    	}
-        TreeNode result=new TreeNode(start+root.val-1);
-        // perform recursion
-        if (root.left!=null)
-        {
-            result.left=assignValue(root.left, start);
-        }
-        if (root.right!=null)
-        {
-            result.right=assignValue(root.right, start);
         }
         return result;
     }
