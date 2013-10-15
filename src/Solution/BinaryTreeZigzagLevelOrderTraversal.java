@@ -1,85 +1,63 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-public class BinaryTreeZigzagLevelOrderTraversal {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		BinaryTreeZigzagLevelOrderTraversal instance=new BinaryTreeZigzagLevelOrderTraversal();
-		TreeNode root=new TreeNode(1);
-		root.left=new TreeNode(2);
-		root.right=new TreeNode(3);
-		ArrayList<ArrayList<Integer>> result=instance.zigzagLevelOrder(root);
-		System.out.println(result);
-	}
-
-	public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // use level-order traverse
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ArrayList<ArrayList<Integer>> zigzagLevelOrder(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // to reverse the order, we will use add(0, x) of arraylist
         ArrayList<ArrayList<Integer>> result=new ArrayList<ArrayList<Integer>>();
-        LinkedList<TreeNode> queue=new LinkedList<TreeNode>();
-        HashMap<TreeNode, Integer> level=new HashMap<TreeNode, Integer>();
-        ArrayList<Integer> value=new ArrayList<Integer>();
         if (root==null)
         {
             return result;
         }
+        LinkedList<TreeNode> queue=new LinkedList<TreeNode>();
+        HashMap<TreeNode, Integer> depth=new HashMap<TreeNode, Integer>();
         queue.add(root);
-        level.put(root, 0);
-        int height=0;
+        depth.put(root, 1);
+        ArrayList<Integer> entry=new ArrayList<Integer>();
+        int level=1;
         while(!queue.isEmpty())
         {
             TreeNode node=queue.remove();
-            // add its children and their height accordingly
+            // we finish a level
+            if (level!=depth.get(node))
+            {
+                result.add(entry);
+                level=depth.get(node);
+                entry=new ArrayList<Integer>();
+            }
+            // add new node
+            // left to right
+            if (level%2==1)
+            {
+                entry.add(node.val);
+            }
+            // right to left
+            else
+            {
+                entry.add(0, node.val);
+            }
+            // add left child
             if (node.left!=null)
             {
                 queue.add(node.left);
-                level.put(node.left, level.get(node)+1);
+                depth.put(node.left, depth.get(node)+1);
             }
+            // add right child
             if (node.right!=null)
             {
                 queue.add(node.right);
-                level.put(node.right, level.get(node)+1);
+                depth.put(node.right, depth.get(node)+1);
             }
-            // check whether we have finished the level or not
-            if (level.get(node)!=height)
-            {
-                // we finish the previous level
-                // check wheher it is symmetric
-                if (height%2==1)
-                {
-                    // we need to reverse the order
-                    ArrayList<Integer> reverse=new ArrayList<Integer>();
-                    for(int i=value.size()-1; i>=0; i--)
-                    {
-                        reverse.add(value.get(i));
-                    }
-                    value=reverse;
-                }
-                result.add(value);
-                height=level.get(node);
-                value=new ArrayList<Integer>();
-            }
-            value.add(node.val);
         }
-        if (height%2==1)
-        {
-            // we need to reverse the order
-            ArrayList<Integer> reverse=new ArrayList<Integer>();
-            for(int i=value.size()-1; i>=0; i--)
-            {
-                reverse.add(value.get(i));
-            }
-            value=reverse;
-        }
-        result.add(value);
+        // for the last level
+        result.add(entry);
         return result;
     }
 }
