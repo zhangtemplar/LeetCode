@@ -1,59 +1,60 @@
-package Solution;
-
-public class AddBinary {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		AddBinary instance=new AddBinary();
-		System.out.println(instance.addBinary(new String("1"), new String("111")));
-	}
-
-	public String addBinary(String a, String b) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        if (a==null || a.length()<1)
-        {
-            return b;
-        }
-        else if (b==null || b.length()<1)
-        {
-            return a;
-        }
+public class Solution {
+    public String addBinary(String a, String b) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
         StringBuffer result=new StringBuffer();
-        int increment=0;
-        int i;
-        for (i=0; i<a.length() && i<b.length(); i++)
+        char increment=0;
+        for(int i=0; i<a.length() && i<b.length(); i++)
         {
-            int ai=a.charAt(a.length()-1-i)-'0';
-            int bi=b.charAt(b.length()-1-i)-'0';
-            result.insert(0, ai^bi^increment);
-            increment=((ai & bi) | ((ai | bi) & increment));
-        }
-        // for the remaining bit
-        if (i<a.length())
-        {
-            for (; i<a.length(); i++)
+            int x=a.charAt(a.length()-i-1)-'0'+b.charAt(b.length()-i-1)-'0'+increment;
+            if (x>1)
             {
-                int ai=a.charAt(a.length()-1-i)-'0';
-                result.insert(0, ai^increment);
-                increment=(ai & increment);
+                x=x-2;
+                increment=1;
+            }
+            else
+            {
+                increment=0;
+            }
+            result.insert(0, x);
+        }
+        if(a.length()>b.length())
+        {
+            for(int i=b.length(); i<a.length(); i++)
+            {
+                int x=a.charAt(a.length()-i-1)-'0'+increment;
+                if (x>1)
+                {
+                    x=x-2;
+                    increment=1;
+                }
+                else
+                {
+                    increment=0;
+                }
+                result.insert(0, x);
             }
         }
-        else if (i<b.length())
+        else if(a.length()<b.length())
         {
-            for (; i<b.length(); i++)
+            for(int i=a.length(); i<b.length(); i++)
             {
-                int bi=b.charAt(b.length()-1-i)-'0';
-                result.insert(0, bi^increment);
-                increment=(bi & increment);
+                int x=b.charAt(b.length()-i-1)-'0'+increment;
+                if (x>1)
+                {
+                    x=x-2;
+                    increment=1;
+                }
+                else
+                {
+                    increment=0;
+                }
+                result.insert(0, x);
             }
         }
-        if (increment==1)
+        // for the extra x
+        if (increment>0)
         {
-            result.insert(0, increment);
+            result.insert(0, '1');
         }
         return result.toString();
     }
