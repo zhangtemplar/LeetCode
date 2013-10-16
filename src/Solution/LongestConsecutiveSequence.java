@@ -1,51 +1,57 @@
-package Solution;
-
-import java.util.HashMap;
-
-public class LongestConsecutiveSequence {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	
+public class Solution {
     public int longestConsecutive(int[] num) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-    	// the hashmap map map the start of the sequence to its length
-        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-        int max = 1;
-        for (int i : num) {
-            if (map.containsKey(i)) 
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we may use hashmap for this purpose
+        // 1st hashmap (start) maps the start of the consecutive sequence to its length
+        // 2nd hashmap (end) maps the end of the consecutive sequence to its length
+        // we scan the array, for each element, we search for num-1 and num+1 in hashmap end and start accoringly
+        // if it is found, we update the hashmap and check whether any entry of two hashmap can't merged
+        // for complexity, each element of the array, will at most add one new entry to each hashmap
+        // i.e., hashmap has space complexity O(n) and hashmap operation take O(1) time
+        // when we looking for the maximal value for value set of hashmap, the time complexity will be O(n)
+        if (num==null || num.length<1)
+        {
+            return 0;
+        }
+        HashMap<Integer, Integer> start=new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> end=new HashMap<Integer, Integer>();
+        for (int i=0; i<num.length; i++)
+        {
+            boolean flag_start=false;
+            boolean flag_end=false;
+            // looking for the consecutive sequence
+            if(start.containsKey(num[i]+1))
             {
-                continue;
+                start.put(num[i], start.get(num[i]+1)+1);
+                flag_start=true;
             }
-            map.put(i, 1);
-            // merge i to the end
-            if (map.containsKey(i - 1)) 
+            else
             {
-                max = Math.max(max, merge(map, i-1, i));
+                start.put(num[i], 1);
             }
-            // merge i to the start
-            if (map.containsKey(i + 1)) 
+            if(end.containsKey(num[i]-1))
             {
-                max = Math.max(max, merge(map, i, i+1));
+                end.put(num[i], end.get(num[i]-1)+1);
+                flag_end=true;
             }
+            else
+            {
+                end.put(num[i], 1);
+            }
+            // looking for a merge
+            start.put(num[i]-end.get(num[i])+1, start.get(num[i])+end.get(num[i])-1);
+            end.put(num[i]+start.get(num[i])-1, start.get(num[i])+end.get(num[i])-1);
+        }
+        // final step, we need to looking for the longest consecutive sequence
+        int max=0;
+        for (int x: start.values())
+        {
+            max=max>x?max:x;
+        }
+        for (int x: end.values())
+        {
+            max=max>x?max:x;
         }
         return max;
-    }
-    
-    private int merge(HashMap<Integer, Integer> map, int left, int right) 
-    {
-        int upper = right + map.get(right) - 1;
-        int lower = left - map.get(left) + 1;
-        int len = upper - lower + 1;
-        map.put(upper, len);
-        map.put(lower, len);
-        return len;
     }
 }
