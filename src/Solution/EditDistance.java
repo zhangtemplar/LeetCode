@@ -1,19 +1,7 @@
-package Solution;
-
-public class EditDistance {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		EditDistance instance=new EditDistance();
-		System.out.println(instance.minDistance("pneumonoultramicroscopicsilicovolcanoconiosis", "ultramicroscopically"));
-	}
-
-	public int minDistance(String word1, String word2) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public int minDistance(String word1, String word2) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use dynamic programming
         // this is the standard dynamic programming problem
         if (word1==null || word1.length()<1)
         {
