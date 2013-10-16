@@ -1,50 +1,50 @@
-package Solution;
-
-public class PartitionList {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ListNode partition(ListNode head, int x) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will create a auxillary node as the head
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we maintain the pointer which is right before x
+        if (head==null || head.next==null)
+        {
+            return head;
+        }
         ListNode result=new ListNode(0);
         result.next=head;
-        // we will main two reference
-        // prev: the last node which is less than x
-        // current: the previous of the node that we are being processed
+        // the location of last node which is smaller than x
+        ListNode cut=result;
+        // the location which is right before the node we are considering
         ListNode current=result;
-        ListNode prev=result;
         while(current.next!=null)
         {
-            if (current.next.val<x)
+            // put it right after cut
+            if(current.next.val<x)
             {
-                if (current==prev)
+                if (current==cut)
                 {
-                    // special case
+                    cut=cut.next;
                     current=current.next;
-                    prev=prev.next;
                 }
                 else
                 {
-                    // we need to move this node ahead
-                    ListNode next=current.next;
-                    current.next=current.next.next;
-                    next.next=prev.next;
-                    prev.next=next;
-                    // then move the prev down
-                    prev=prev.next;
+                    ListNode cut_next=cut.next;
+                    ListNode current_next=current.next;
+                    cut.next=current_next;
+                    current.next=current_next.next;
+                    current_next.next=cut_next;
+                    cut=current_next;
                 }
             }
             else
             {
-                // we just skip this node
                 current=current.next;
             }
         }
