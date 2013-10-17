@@ -1,118 +1,79 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-public class PalindromePartitioning {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PalindromePartitioning instance=new PalindromePartitioning();
-		String s="a";
-		System.out.println(instance.partition(s));
-	}
-
-	public ArrayList<ArrayList<String>> partition(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public ArrayList<ArrayList<String>> partition(String s) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion
+        // to improve the speed, we use hashset to store the parlindrome found in the string
         if (s==null || s.length()<1)
         {
-            return new ArrayList<ArrayList<String>>();
-        }
-        is_palindrome=new HashMap<SubString, Boolean>();
-        buffer_partition=new HashMap<SubString, ArrayList<ArrayList<String>>>();
-        return partition(s, 0);
-    }
-    
-    // this is the buffer for quickly determining whether is a palindrome of not
-    private HashMap<SubString, Boolean> is_palindrome;
-    
-    // this buffer stores the possible partition for the substring
-    private HashMap<SubString, ArrayList<ArrayList<String>>> buffer_partition;
-    
-    private ArrayList<ArrayList<String>> partition(String s, int start) 
-    {
-        if (buffer_partition.containsKey(new SubString(start, s.length()-1, s.length())))
-        {
-            return buffer_partition.get(new SubString(start, s.length()-1, s.length()));
-        }
-        ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
-        if (start>=s.length())
-        {
+            ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
+            result.add(new ArrayList<String>());
             return result;
         }
-        for (int i=start; i<s.length(); i++)
-        {
-            if (isPalindrome(s, start, i))
-            {
-                ArrayList<ArrayList<String>> base=partition(s, i+1);
-                if (base.isEmpty())
-                {
-                	ArrayList<String> entry=new ArrayList<String>();
-                    entry.add(0, s.substring(start, i+1));
-                    result.add(entry);
-                }
-                for (ArrayList<String> path: base)
-                {
-                    ArrayList<String> entry=new ArrayList<String>(path);
-                    entry.add(0, s.substring(start, i+1));
-                    result.add(entry);
-                }
-            }
-        }
-        buffer_partition.put(new SubString(start, s.length()-1, s.length()), result);
-        return result;
+        buffer=new HashMap<String, Boolean>();
+        return partition(s, 0, new ArrayList<String>());
     }
     
+    private HashMap<String, Boolean> buffer;
+    
+    /**
+     * @param end is the index to be processed
+     * @param base is the result found from the previous part
+     */ 
+    private ArrayList<ArrayList<String>> partition(String s, int end, ArrayList<String> base)
+    {
+        ArrayList<ArrayList<String>> result=new ArrayList<ArrayList<String>>();
+        if (end>=s.length())
+        {
+            result.add(base);
+            return result;
+        }
+        else
+        {
+            for (int i=end; i<s.length(); i++)
+            {
+                // check whether s[end:i] is a palindrome or not
+                if (isPalindrome(s, end, i))
+                {
+                    ArrayList<String> element=new ArrayList<String>(base);
+                    element.add(s.substring(end, i+1));
+                    result.addAll(partition(s, i+1, element));
+                }
+            }
+            return result;
+        }
+    }
+    
+    /**
+     * determine whether s[start:end] is a palindrome
+     * we also use a hashmap to look up previous result quickly
+     */ 
     private boolean isPalindrome(String s, int start, int end)
     {
-        if (is_palindrome.containsKey(new SubString(start, end, s.length())))
-        {
-            return is_palindrome.get(new SubString(start, end, s.length()));
-        }
-        if (start>=end)
+        if (start==end)
         {
             return true;
         }
-        int i=start;
-        int j=end;
-        for(; i<j; i++, j--)
+        else if(start<end)
         {
-            if (s.charAt(i)!=s.charAt(j))
+            String str=s.substring(start, end+1);
+            if (buffer.containsKey(str))
             {
-                is_palindrome.put(new SubString(start, end, s.length()), false);
-                return false;
+                return buffer.get(str);
             }
-        }
-        is_palindrome.put(new SubString(start, end, s.length()), true);
-        return true;
-    }
-}
-
-class SubString
-{
-    int start, end, len;
-    public SubString(int s, int e, int l)
-    {
-        start=s;
-        end=e;
-        len=l;
-    }
-    
-    public int hashCode()
-    {
-        return start+end*len;
-    }
-    
-    public boolean equals(Object obj)
-    {
-        if (obj instanceof SubString)
-        {
-            SubString tmp=(SubString) obj;
-            return tmp.start==start && tmp.end==end && tmp.len==len;
+            else
+            {
+                boolean flag=true;
+                for (int i=0; i<str.length()-i-1; i++)
+                {
+                    if (str.charAt(i)!=str.charAt(str.length()-i-1))
+                    {
+                        flag=false;
+                        break;
+                    }
+                }
+                buffer.put(str, flag);
+                return flag;
+            }
         }
         return false;
     }
