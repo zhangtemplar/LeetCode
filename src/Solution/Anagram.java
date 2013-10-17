@@ -1,101 +1,67 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
-public class Anagram {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Anagram instance=new Anagram();
-		String[] str={"",""};
-		System.out.println(instance.anagrams(str));
-	}
-
-	public ArrayList<String> anagrams(String[] strs) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use a Hashmap, where the key is the char count and value is string
+public class Solution {
+    public ArrayList<String> anagrams(String[] strs) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // anagrams are words which have the same counting of character
+        // we group the string according to their anagrams property
+        // for implementation, we use hashmap to store the groups
+        // finally we return the groups which are larger than 1
         if (strs==null || strs.length<1)
         {
             return new ArrayList<String>();
         }
-        HashSet<StringCount> table=new HashSet<StringCount>();
-        ArrayList<String> result=new ArrayList<String>();
+        // the map of group index to the counting table.
+        HashMap<ArrayList<Integer>, ArrayList<String>> map=new HashMap<ArrayList<Integer>, ArrayList<String>>();
         for (String str: strs)
         {
-        	StringCount new_entry=new StringCount(str);
-            if (!table.contains(new_entry))
+            ArrayList<Integer> table=countLetter(str);
+            if (map.containsKey(table))
             {
-                table.add(new_entry);
+                map.get(table).add(str);
             }
             else
             {
-            	result.add(str);
+                // we found a new group
+                ArrayList<String> entry=new ArrayList<String>();
+                entry.add(str);
+                map.put(table, entry);
+            }
+        }
+        // finally return all the group whose size is larger than 1
+        ArrayList<String> result=new ArrayList<String>();
+        for (ArrayList<String> entry: map.values())
+        {
+            if (entry.size()>1)
+            {
+                result.addAll(entry);
             }
         }
         return result;
     }
     
-
-}
-
-class StringCount
-{
-	String str;
-	int []letter;
-	int count;
-	public StringCount(String s)
-	{
-		str=s;
-		letter=countChar(str);
-		count=0;
-	}
-	
-    private int[] countChar(String str)
+    private boolean isAnagram(ArrayList<Integer> x, ArrayList<Integer> y)
     {
-        int []result=new int[26];
-        for (int i=0; i<str.length(); i++)
+        for (int i=0; i<x.size(); i++)
         {
-            result[str.charAt(i)-'a']++;
+            if (!x.get(i).equals(y.get(i)))
+            {
+                return false;
+            }
         }
-        return result;
+        return true;
     }
     
-	public String toString()
-	{
-		return new String(count+" "+str);
-	}
-	
-	public boolean equals(Object obj)
-	{
-		if (obj instanceof StringCount)
-		{
-			StringCount obj2=(StringCount) obj;
-			for(int i=0; i<letter.length; i++)
-			{
-				if (letter[i]!=obj2.letter[i])
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-	
-	public int hashCode()
-	{
-		int result=0;
-		for (int i=0; i<letter.length; i++)
-		{
-			result+=letter[i]*(i+'a');
-		}
-		return result;
-	}
+    private ArrayList<Integer> countLetter(String s)
+    {
+        int []result=new int[26];
+        for(int i=0; i<s.length(); i++)
+        {
+            result[s.charAt(i)-'a']++;
+        }
+        ArrayList<Integer> table=new ArrayList<Integer>(26);
+        for (int i=0; i<result.length; i++)
+        {
+            table.add(i, result[i]);
+        }
+        return table;
+    }
 }
