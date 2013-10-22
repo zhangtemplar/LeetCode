@@ -1,89 +1,49 @@
-package Solution;
-
-public class LongestSubstringNonrepeat {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("The length of the longest substring without repeating characters of abcabcbb is "+lengthOfLongestSubstring("abcabcbb"));
-		System.out.println("The length of the longest substring without repeating characters of bbbbb is "+lengthOfLongestSubstring("bbbbb"));
-		System.out.println("The length of the longest substring without repeating characters of hchzvfrkmlnozjk is "+lengthOfLongestSubstring("hchzvfrkmlnozjk"));
-	}
-
-    public static int lengthOfLongestSubstring(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // the idea is simple, we define a window which scans in the string
-        // The windows starts from maximal to the minimal, whenever we find a valid
-        // window we terminate
-        int start, size;
-        start=0;
-        size=s.length();
-        int []alphabet=new int[256];
-        for (int i=0; i<s.length(); i++)
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we use dynamic programming
+        // we start with substring of length 1, record as the current maximal
+        // we add the right if no duplicates found
+        // otherwise we remove the left, until the duplicates is moved
+        // we update the maximal when necessary
+        if (s==null || s.length()<1)
         {
-            alphabet[s.charAt(i)]++;
+            return 0;
         }
-        if (isValid(alphabet))
+        // we will use a hashMap to store the found element
+        HashMap<Character, Integer> table=new HashMap<Character, Integer>();
+        int left=0;
+        int right=0;
+        int max=1;
+        table.put(s.charAt(left), 1);
+        while(left<=right && right<s.length()-1)
         {
-            return size;
-        }
-        // start the scaning
-        size--;
-        for (; size>0; size--)
-        {
-            // we use zigzag order
-            if (size%2==0)
+            // ok, no duplicates, we can move on
+            right++;
+            if (!table.containsKey(s.charAt(right)) || table.get(s.charAt(right))<1)
             {
-                // start from the left
-                alphabet[s.charAt(size)]--;
-                if (isValid(alphabet))
+                if (max<right-left+1)
                 {
-                   return size;
+                    max=right-left+1;
                 }
-                for (start=1; start<=s.length()-size; start++)
-                {
-                    alphabet[s.charAt(start-1)]--;
-                    alphabet[s.charAt(start+size-1)]++;
-                    if (isValid(alphabet))
-                    {
-                       return size;
-                    }
-                }
+                table.put(s.charAt(right), 1);
             }
+            // we need to shrink the left to remove the duplicate
             else
             {
-                // start from the right
-                alphabet[s.charAt(s.length()-1-size)]--;
-                if (isValid(alphabet))
+                // add the right anyway
+                table.put(s.charAt(right), table.get(s.charAt(right))+1);
+                // remove the duplicate due to right by shrinking on the left
+                while(table.get(s.charAt(right))>1 && left<right)
                 {
-                   return size;
-                }
-                for (start=s.length()-2; start>size-2; start--)
-                {
-                    alphabet[s.charAt(start+1)]--;
-                    alphabet[s.charAt(start-size+1)]++;
-                    if (isValid(alphabet))
+                    if (table.get(s.charAt(left))>0)
                     {
-                       return size;
+                        table.put(s.charAt(left), table.get(s.charAt(left))-1);
                     }
+                    left++;
                 }
             }
         }
-        return size;
-    }
-    
-    private static boolean isValid(int []s)
-    {
-        for (int i='a'; i<='z'; i++)
-        {
-            if (s[i]>1)
-            {
-                return false;
-            }
-        }
-        return true;
+        return max;
     }
 }
