@@ -1,57 +1,42 @@
-package Solution;
-
-import java.util.HashSet;
-import java.util.Stack;
-
-public class FlattenBinaryTreeLinkedList {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void flatten(TreeNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // sounds like an preorder traversal node left right
-        // we use recursion
-        Stack<TreeNode> stack=new Stack<TreeNode>();
-        HashSet<TreeNode> visited=new HashSet<TreeNode>();
-        TreeNode node=null;
-        TreeNode prev=null;
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public void flatten(TreeNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // recursion
+        subFlatten(root);
+    }
+    
+    // we always return the last node in the current list
+    private TreeNode subFlatten(TreeNode root)
+    {
         if (root==null)
         {
-            return;
+            return null;
         }
-        stack.push(root);
-        while(!stack.isEmpty())
+        TreeNode right=root.right;
+        TreeNode tail=root;
+        root.right=null;
+        // preorder: root.next is the its left subtree
+        if (root.left!=null)
         {
-            node=stack.pop();
-            if (visited.contains(node))
-            {
-                if(node!=root)
-                {
-                    prev.right=node;
-                    prev.left=null;
-                }
-                prev=node;
-                continue;
-            }
-            if(node.right!=null)
-            {
-                stack.push(node.right);
-            }
-            if (node.left!=null)
-            {
-                stack.push(node.left);
-            }
-            visited.add(node);
-            stack.push(node);
+            tail=subFlatten(root.left);
+            root.right=root.left;
         }
-        node.left=null;
-        node.right=null;
+        // right subtree is concatenated to the end of the list
+        if (right!=null)
+        {
+            tail.right=right;
+            tail=subFlatten(right);
+            TreeNode node=root;
+        }
+        return tail;
     }
 }
