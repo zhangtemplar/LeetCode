@@ -11,21 +11,35 @@ public class Solution {
         Arrays.sort(num);
         for (int i=0; i<num.length; i++)
         {
-            for (int j=i+1; j<num.length; j++)
+            for (int j=num.length-1; j>=i+3; j--)
             {
-                for (int k=j+1; k<num.length; k++)
+                int p=i+1;
+                int q=j-1;
+                int sum=target-num[i]-num[j];
+                while(p<q)
                 {
-                    int sum=target-num[i]-num[j]-num[k];
-                    int l=Arrays.binarySearch(num, k+1, num.length, sum);
-                    // we find a solution
-                    if (l>=0)
+                    int residule=sum-num[p]-num[q];
+                    // we found a solution
+                    if (residule==0)
                     {
                         ArrayList<Integer> entry=new ArrayList<Integer>();
                         entry.add(num[i]);
+                        entry.add(num[p]);
+                        entry.add(num[q]);
                         entry.add(num[j]);
-                        entry.add(num[k]);
-                        entry.add(num[l]);
                         result.add(entry);
+                        p++;
+                        q--;
+                    }
+                    // current combination is too small
+                    else if(residule>0)
+                    {
+                        p++;
+                    }
+                    // current combination is too large
+                    else
+                    {
+                        q--;
                     }
                 }
             }
