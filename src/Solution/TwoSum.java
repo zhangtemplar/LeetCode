@@ -8,15 +8,24 @@ public class Solution {
             return result;
         }
         // save the index
-        // since there is only solution, we know that the duplicate/hit in hash won't our result
-        HashMap<Integer, Integer> index=new HashMap<Integer, Integer>();
+        // for value we use an arraylist to deal with duplicate element in the array
+        HashMap<Integer, ArrayList<Integer>> index=new HashMap<Integer, ArrayList<Integer>>();
         int i=0;
         int j=numbers.length-1;
         for (i=0; i<numbers.length; i++)
         {
-            index.put(numbers[i], i+1);
+            if (index.containsKey(numbers[i]))
+            {
+                index.get(numbers[i]).add(i+1);
+            }
+            else
+            {
+                ArrayList<Integer> entry=new ArrayList<Integer>();
+                entry.add(i+1);
+                index.put(numbers[i], entry);
+            }
         }
-        // sprt
+        // sort
         Arrays.sort(numbers);
         // find the result
         i=0;
@@ -38,15 +47,18 @@ public class Solution {
             }
         }
         // find the old index
-        if (index.get(numbers[i])>index.get(numbers[j]))
+        if (numbers[i]==numbers[j])
         {
-            result[1]=index.get(numbers[i]);
-            result[0]=index.get(numbers[j]);
+            // there will be conflict
+            result[0]=index.get(numbers[i]).get(0);
+            result[1]=index.get(numbers[i]).get(1);
         }
         else
         {
-            result[0]=index.get(numbers[i]);
-            result[1]=index.get(numbers[j]);
+            int x=index.get(numbers[i]).get(0);
+            int y=index.get(numbers[j]).get(0);
+            result[0]=x<y?x:y;
+            result[1]=x>y?x:y;
         }
         return result;
     }
