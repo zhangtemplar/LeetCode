@@ -1,93 +1,52 @@
-package Solution;
-
-public class AddTwoNumbers {
-	public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int extra, sum;
-        extra=0;
-        ListNode result, ptr, ptr_l1, ptr_l2;
-        ptr_l1=l1;
-        ptr_l2=l2;
-        ptr=null;
-        result=null;
-        // the main part
-        while (ptr_l1!=null && ptr_l2!=null)
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        ListNode result=new ListNode(0);
+        ListNode node=result;
+        int increment=0;
+        // summation
+        while(l1!=null && l2!=null)
         {
-            sum=ptr_l1.val+ptr_l2.val+extra;
-            extra=sum/10;
-            sum=sum%10;
-            if (result==null)
-            {
-                ptr=new ListNode(sum);
-                result=ptr;
-            }
-            else
-            {
-                ptr.next=new ListNode(sum);
-                ptr=ptr.next;
-            }
-            ptr_l1=ptr_l1.next;
-            ptr_l2=ptr_l2.next;
+            int sum=l1.val+l2.val+increment;
+            increment=sum/10;
+            node.next=new ListNode(sum%10);
+            node=node.next;
+            l1=l1.next;
+            l2=l2.next;
         }
-        // for the other case, e.g, one of the list is unfinished
-        while (ptr_l1!=null)
+        // dealing unmatched point
+        while(l1!=null)
         {
-            sum=ptr_l1.val+extra;
-            extra=sum/10;
-            sum=sum%10;
-            if (result==null)
-            {
-                ptr=new ListNode(sum);
-                result=ptr;
-            }
-            else
-            {
-                ptr.next=new ListNode(sum);
-                ptr=ptr.next;
-            }
-            ptr_l1=ptr_l1.next;
+            int sum=l1.val+increment;
+            increment=sum/10;
+            node.next=new ListNode(sum%10);
+            node=node.next;
+            l1=l1.next;
         }
-        while(ptr_l2!=null)
+        while(l2!=null)
         {
-            sum=ptr_l2.val+extra;
-            extra=sum/10;
-            sum=sum%10;
-            if (result==null)
-            {
-                ptr=new ListNode(sum);
-                result=ptr;
-            }
-            else
-            {
-                ptr.next=new ListNode(sum);
-                ptr=ptr.next;
-            }
-            ptr_l2=ptr_l2.next;
+            int sum=l2.val+increment;
+            increment=sum/10;
+            node.next=new ListNode(sum%10);
+            node=node.next;
+            l2=l2.next;
         }
         // for the increment
-        if (extra>0)
+        if (increment>0)
         {
-            if (result==null)
-            {
-                ptr=new ListNode(extra);
-                result=ptr;
-            }
-            else
-            {
-                ptr.next=new ListNode(extra);
-                ptr=ptr.next;
-            }
+            node.next=new ListNode(increment);
         }
-        return result;
+        return result.next;
     }
 }
-
-class ListNode {
-      int val;
-      ListNode next;
-      ListNode(int x) {
-         val = x;
-          next = null;
-      }
- }
