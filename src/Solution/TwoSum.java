@@ -1,98 +1,53 @@
-package Solution;
-
-import java.util.Arrays;
-
-public class TwoSum {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		int []arr={2,1,9,4,4,56,90,3};
-		int []result=twoSum(arr, 8);
-	}
-
-	/**
-	 * one test case
-	 * input					output	expected	
-	 * [2,1,9,4,4,56,90,3], 8	4, 4	4, 5
-	 * @param numbers
-	 * @param target
-	 * @return
-	 */
-    public static int[] twoSum(int[] numbers, int target) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int []result=new int[2];
-        result[0]=0;
-        result[1]=0;
+public class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // the complexity should be linear, if the array is sorted
+        int[]result=new int[2];
         if (numbers==null || numbers.length<2)
         {
             return result;
         }
-        // copy the array
-        int []arr=numbers.clone();
-        Arrays.sort(arr);
-        int i, j;
+        // save the index
+        // since there is only solution, we know that the duplicate/hit in hash won't our result
+        HashMap<Integer, Integer> index=new HashMap<Integer, Integer>();
+        int i=0;
+        int j=numbers.length-1;
+        for (i=0; i<numbers.length; i++)
+        {
+            index.put(numbers[i], i+1);
+        }
+        // sprt
+        Arrays.sort(numbers);
+        // find the result
         i=0;
-        j=arr.length-1;
-        int sum;
+        j=numbers.length-1;
         while(i<j)
         {
-            sum=arr[i]+arr[j];
-            if (sum<target)
+            int sum=numbers[i]+numbers[j];
+            if (target==sum)
             {
-                i++;
+                break;
             }
-            else if (sum>target)
+            else if(target<sum)
             {
                 j--;
             }
             else
             {
-                // find the solution, we also assumes only one soultion there
-                // we can't apply the binary search for orignal index due to unsorted
-                if (arr[i]==arr[j])
-                {
-                    // in case there are indentical element in the array, we search from the next position
-                    i=searchIndex(numbers, arr[i])+1;
-                    j=searchIndex(numbers, arr[j], i)+1;
-                }
-                else
-                {
-                    i=searchIndex(numbers, arr[i])+1;
-                    j=searchIndex(numbers, arr[j])+1;
-                }
-                result[0]=i>j?j:i;
-                result[1]=i>j?i:j;
-                break;
+                i++;
             }
+        }
+        // find the old index
+        if (index.get(numbers[i])>index.get(numbers[j]))
+        {
+            result[1]=index.get(numbers[i]);
+            result[0]=index.get(numbers[j]);
+        }
+        else
+        {
+            result[0]=index.get(numbers[i]);
+            result[1]=index.get(numbers[j]);
         }
         return result;
-    }
-    
-    /**
-     * search in the whole array
-     */
-    public static int searchIndex(int [] arr, int value)
-    {
-        return searchIndex(arr, value, 0);
-    }
-    
-    /**
-     * search from the specific location (inclusive)
-     */
-    public static int searchIndex(int [] arr, int value, int offset)
-    {
-        int i=offset;
-        for (; i<arr.length; i++)
-        {
-            if (arr[i]==value)
-            {
-                return i;
-            }
-        }
-        return i;
     }
 }
