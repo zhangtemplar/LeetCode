@@ -1,97 +1,79 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-
-public class JumpGameII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		JumpGameII instance=new JumpGameII();
-		ArrayList<Integer> arr=new ArrayList<Integer>();
-		StringTokenizer token=new StringTokenizer(args[0]);
-		while(token.hasMoreTokens())
-		{
-			arr.add(Integer.parseInt(token.nextToken()));
-		}
-		int []num=new int[arr.size()];
-		for (int i=0; i<arr.size(); i++)
-		{
-			num[i]=arr.get(i);
-		}
-		System.out.println(instance.jump(num));
-	}
-	
-	public int jump(int []A)
-	{
-		int ret = 0;
-        int last = 0;
-        int curr = 0;
-        for (int i = 0; i < A.length; ++i) {
-            if (i > last) {
-                last = curr;
-                ++ret;
-            }
-            curr = curr>(i+A[i])?curr:(i+A[i]);
-        }
-
-        return ret;
-	}
-
-	public int jumpSlow(int[] A) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-		// we use dynamic programming to solve this problem
-		// it seems to be very slow
-        if (A==null || A.length<1)
+public class Solution {
+    public int jump(int[] A) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we can use dynamic programming
+        // f(i) is the min # of jumps required from i to n-1 (i.e., end)
+        // f(i)=0, i>=n-1;
+        // f(i)=1, i+A[i]>=n-1;
+        // f(i)=min_{j:i+n(i)>=j}{f(j)}+1
+        // the complexity should be O(n^2), where the worst case comes from search in the minimal
+        if (A==null || A.length<2)
         {
             return 0;
         }
-        buffer=new int[A.length];
-        Arrays.fill(buffer, -1);
-        return jump(A, 0);
-    }
-    
-    // the buffer
-    private int[] buffer;
-    
-    // the minimum number of steps takes from i to the end
-    private int jump(int []A, int i)
-    {
-        // check the buffer first
-        if (i>=A.length-1)
+        int []buffer=new int[A.length];
+        buffer[A.length-1]=0;
+        // we also keep a location of the previous minimum
+        int index=A.length;
+        for (int i=A.length-2; i>=0; i--)
         {
-            // we already get here
-            return 0;
-        }
-        else if(buffer[i]>=0)
-        {
-            return buffer[i];
-        }
-        else
-        {
-            int min=Integer.MAX_VALUE/2;
-            int trial=0;
-            // we try from the start
-            for (int j=A[i]; j>0; j--)
+            int min=Integer.MAX_VALUE;
+            // we know the minimum in the first section of the range
+            // then we only need to check the second section
+            if (i+A[i]>=i+1+A[i+1])
             {
-                trial=jump(A, i+j);
-                if (trial<min)
+                // we already knows that buffer[i]=min_{j:i+n(i)>=j}{f(j)}+1
+                if (buffer[i+1]>0)
                 {
-                    min=trial;
+                    min=buffer[i+1]-1;
                 }
-                // we meet the target there is no need to try any more
-                if (min==0)
+                else
                 {
-                    break;
+                    min=0;
+                }
+                for (int j=i+2+A[i+1]; j<=A.length-1 && j<=i+A[i]; j++)
+                {
+                    if (min>buffer[j])
+                    {
+                        min=buffer[j];
+                        index=j;
+                    }
                 }
             }
-            buffer[i]=min+1;
-            return min+1;
+            else if(index<=i+A[i])
+            {
+                // we know the previous minimum can be directly used here
+                if (buffer[i+1]>0)
+                {
+                    min=buffer[i+1]-1;
+                }
+                else
+                {
+                    min=0;
+                }
+            }
+            else
+            {
+                // unfortunately, we need do a full search in the new range
+                for (int j=i+1; j<=A.length-1 && j<=i+A[i]; j++)
+                {
+                    if (min>buffer[j])
+                    {
+                        min=buffer[j];
+                        index=j;
+                    }
+                }
+            }
+            // this means there is no step out
+            if (min==Integer.MAX_VALUE)
+            {
+                buffer[i]=Integer.MAX_VALUE;
+            }
+            else
+            {
+                buffer[i]=min+1;
+            }
         }
+        return buffer[0];
     }
 }
