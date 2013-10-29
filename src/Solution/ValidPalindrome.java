@@ -1,39 +1,27 @@
-package Solution;
-
-public class ValidPalindrome {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public boolean isPalindrome(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public boolean isPalindrome(String s) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
         if (s==null || s.length()<1)
         {
             return true;
         }
-        s=s.toLowerCase();
-        int i=0; 
-        int j=s.length()-1;
+        String str=s.toLowerCase();
+        int i=0;
+        int j=str.length()-1;
         while(i<j)
         {
-            if (!isDigit(s.charAt(i)))
+            if (isalphanumeric(str.charAt(i))==false)
             {
                 i++;
             }
-            else if(!isDigit(s.charAt(j)))
+            else if (isalphanumeric(str.charAt(j))==false)
             {
                 j--;
             }
             else
             {
-                // both are alphabet, compare it
-                if (s.charAt(i)!=s.charAt(j))
+                if (str.charAt(i)!=str.charAt(j))
                 {
                     return false;
                 }
@@ -47,8 +35,8 @@ public class ValidPalindrome {
         return true;
     }
     
-    public boolean isDigit(char c)
+    private boolean isalphanumeric(char c)
     {
-        return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9');
+        return (c>='0' && c<='9') || (c>='a' && c<='z');
     }
 }
