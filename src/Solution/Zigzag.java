@@ -1,57 +1,66 @@
-package Solution;
-
-public class Zigzag {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String convert(String s, int nRows) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // by a quick analysis, we have
-        // first line: s[4*i]
-        // second line: s[2*i=1]
-        // third line: s[4*i+2]
-        // for the special case
-        if (nRows<=1)
+public class Solution {
+    public String convert(String s, int nRows) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // we just need to find a proper index
+        if (nRows<2)
         {
             return s;
         }
-        // for generic case
-        char []str=new char[s.length()];
-        int period=2*(nRows-1);
-        int k=0;
-        for (int i=0; i<nRows; i++)
+        int step=2*(nRows-1);
+        StringBuffer result=new StringBuffer();
+        // row 0
+        for (int j=0; ; j++)
         {
-            for (int j=0; j<=s.length()/period; j++)
+            int k=j*step;
+            if (k>=s.length())
             {
-                if (i==0 || i==nRows-1)
+                break;
+            }
+            else
+            {
+                result.append(s.charAt(k));
+            }
+        }
+        // middle
+        for (int i=1; i<nRows-1; i++)
+        {
+            for (int j=0; ; j++)
+            {
+                int k=j*step+i;
+                if (k>=s.length())
                 {
-                    // for the corner
-                    if (j*period+i<s.length())
-                    {
-                        str[k++]=s.charAt(j*period+i);
-                    }
+                    break;
                 }
                 else
                 {
-                    // for all the other rows
-                    if (j*period+i<s.length())
-                    {
-                        str[k++]=s.charAt(j*period+i);
-                    }
-                    if (j*period+period-i<s.length())
-                    {
-                        str[k++]=s.charAt(j*period+period-i);
-                    }
+                    result.append(s.charAt(k));
+                }
+                
+                k=(j+1)*step-i;
+                if (k>=s.length())
+                {
+                    break;
+                }
+                else
+                {
+                    result.append(s.charAt(k));
                 }
             }
         }
-        return new String(str);
+        // last row
+        for (int j=0; ; j++)
+        {
+            int k=j*step+nRows-1;
+            if (k>=s.length())
+            {
+                break;
+            }
+            else
+            {
+                result.append(s.charAt(k));
+            }
+        }
+        return result.toString();
     }
 }
