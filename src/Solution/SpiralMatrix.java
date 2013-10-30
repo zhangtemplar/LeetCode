@@ -1,81 +1,54 @@
-package Solution;
-
-import java.util.ArrayList;
-
-public class SpiralMatrix {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		SpiralMatrix instance=new SpiralMatrix();
-		int [][]arr={{6,9,7}};
-		ArrayList<Integer> result=instance.spiralOrder(arr);
-		System.out.println(result);
-	}
-
-	public ArrayList<Integer> spiralOrder(int[][] matrix) {
-        // Start typing your Java solution below
-        // DO NOT write main() function\
+public class Solution {
+    public ArrayList<Integer> spiralOrder(int[][] matrix) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
         ArrayList<Integer> result=new ArrayList<Integer>();
         if (matrix==null || matrix.length<1 || matrix[0]==null || matrix[0].length<1)
         {
             return result;
         }
-        int m=matrix.length;
-        int n=matrix[0].length;
-        int spiral=(m/2)>(n/2)?(n/2):(m/2);
-        // the main algorithm
-        // this should work with the case m is even
-        int i;
-        for (i=0; i<spiral; i++)
+        int round=Math.min(matrix.length, matrix[0].length)/2;
+        for (int i=0; i<round; i++)
         {
-            // for left-right
-            for (int j=i; j<n-i-1; j++)
+            // left to right
+            for (int j=i; j<matrix[i].length-i-1; j++)
             {
                 result.add(matrix[i][j]);
             }
-            // for top-down
-            for (int j=i; j<m-i-1; j++)
+            // top to bottom
+            for(int j=i; j<matrix.length-i-1; j++)
             {
-                result.add(matrix[j][n-i-1]);
+                result.add(matrix[j][matrix[j].length-i-1]);
             }
-            // for right-left
-            for (int j=n-i-1; j>i; j--)
+            // right to left
+            for (int j=matrix[matrix.length-i-1].length-1-i; j>i; j--)
             {
-                result.add(matrix[m-i-1][j]);
+                result.add(matrix[matrix.length-i-1][j]);
             }
-            // for bottom-top
-            for (int j=m-i-1; j>i; j--)
+            // bottom to top
+            for (int j=matrix.length-i-1; j>i; j--)
             {
                 result.add(matrix[j][i]);
             }
         }
-        // post-processing, check the special case, where m is odd
-        if (n==1 || m==1)
+        // post-processing, we will have some element unprocessed
+        // this only happens the row and column is not even and equal
+        if (round*2!=matrix.length && round*2!=matrix[0].length)
         {
-            for (i=0; i<m; i++)
+            // top to bottom
+            if (matrix.length<matrix[0].length)
             {
-                for (int j=0; j<n; j++)
+                for (int j=round; j<matrix[round].length-round; j++)
                 {
-                    result.add(matrix[i][j]);
+                    result.add(matrix[round][j]);
                 }
             }
-        }
-        else if(n<m && n%2>0)
-        {
-        	for (int j=i; j<=m-i-1; j++)
+            else
             {
-                result.add(matrix[j][i]);
-            }
-        }
-        else if(m<=n && m%2>0)
-        {
-        	// we have one row left out
-            for (int j=i; j<=n-i-1; j++)
-            {
-                result.add(matrix[i][j]);
+                for (int j=round; j<matrix.length-round; j++)
+                {
+                    result.add(matrix[j][round]);
+                }
             }
         }
         return result;
