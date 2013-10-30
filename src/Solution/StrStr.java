@@ -1,56 +1,35 @@
-package Solution;
-
-public class StrStr {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		StrStr instance=new StrStr();
-		System.out.println(instance.strStr("mississippi", "issip"));
-	}
-
-	public String strStr(String haystack, String needle) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-		// Start typing your Java solution below
-        // DO NOT write main() function
-        if (haystack==null)
+public class Solution {
+    public String strStr(String haystack, String needle) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // KMP algorithm
+        if (needle==null || needle.length()<1)
         {
-            return null;
-        }
-        else if(needle!=null && needle.length()>haystack.length())
-        {
-            return null;
-        }
-        else if (needle==null || needle.length()<1)
-        {
-            // need is empty, return anything we get
             return haystack;
         }
-        // all the common case
-        int i, j;
-        i=0; j=0;
-        int []pattern=findPattern(needle);
+        else if (haystack==null || haystack.length()<needle.length())
+        {
+            return null;   
+        }
+        int []table=initialTable(needle);
+        int i=0;
+        int j=0;
         while(i+j<haystack.length())
         {
             if (haystack.charAt(i+j)==needle.charAt(j))
             {
-                // current match
-                if (j>=needle.length()-1)
+                j++;
+                if (j>=needle.length())
                 {
                     return haystack.substring(i);
                 }
-                // try the next
-                j++;
             }
             else
             {
-                i=i+j-pattern[j];
-                if (pattern[j]>-1)
+                i=i+j-table[j];
+                if (table[j]>-1)
                 {
-                    j=pattern[j];
+                    j=table[j];
                 }
                 else
                 {
@@ -61,41 +40,44 @@ public class StrStr {
         return null;
     }
     
-    private int[] findPattern(String str)
+    private int[] initialTable(String str)
     {
-        if (str==null || str.length()<1)
-        {
-            return null;
-        }
         int []result=new int[str.length()];
-        if (str.length()==1)
+        if (str.length()<1)
         {
-            result[0]=-1;
-            return result;
-        }
-        else if(str.length()==2)
-        {
-            result[0]=-1;
-            result[1]=0;
             return result;
         }
         result[0]=-1;
+        if (str.length()<2)
+        {
+            return result;
+        }
         result[1]=0;
+        if (str.length()<3)
+        {
+            return result;
+        }
         int pos=2;
         int cnd=0;
         while(pos<str.length())
         {
+            // find a matched substring
             if (str.charAt(pos-1)==str.charAt(cnd))
             {
-                result[pos++]=++cnd;
+                cnd++;
+                result[pos]=cnd;
+                pos++;
             }
+            // try to find a previous match
             else if (cnd>0)
             {
                 cnd=result[cnd];
             }
+            // no such match found, start a new one
             else
             {
-                result[pos++]=0;
+                result[pos]=0;
+                pos++;
             }
         }
         return result;
