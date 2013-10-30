@@ -1,86 +1,47 @@
-package Solution;
-
-public class PermutationSequence {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PermutationSequence instance=new PermutationSequence();
-		System.out.println(instance.getPermutation(1, 1));
-//		for (int i=0; i<720; i++)
-//		{
-//			System.out.println(instance.getPermutation(6, i));
-//		}
-	}
-
-	public String getPermutation(int n, int k) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use recursion
-        if (n<1)
+public class Solution {
+    public String getPermutation(int n, int k) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // we don't even need to list all the number
+        if (k<1)
         {
-            return new String();
+            k=1;
         }
-        int []pSize=new int[n+1];
-        permutationNumber(pSize, n);
-        pSize[0]=1;
-        // k starts from 1
-        k=k-1;
-        if (k<0 || k>=pSize[n])
+        int []table=new int[n];
+        int []number=new int[n];
+        table[0]=1;
+        number[0]=1;
+        for (int i=1; i<n; i++)
         {
-            // too large or two small
-            return new String();
+            table[i]=table[i-1]*(i);
+            number[i]=i+1;
         }
-        int head;
-        int index=n;
-        char[] digit=new char[n];
+        if (k>table[table.length-1]*n)
+        {
+            k=table[table.length-1]*n;
+        }
+        StringBuffer result=new StringBuffer();
+        k--;
         for (int i=0; i<n; i++)
         {
-            digit[i]=(char)(i+'1');
-        }
-        char []result=new char[n];
-        while(index>0)
-        {
-            head=k/pSize[index-1];
-            int j=0;
-            while(j<head || digit[j]<'1')
+            int digit=k/table[n-i-1];
+            int j;
+            int l=0;
+            for (j=0; j<number.length; j++)
             {
-            	if (digit[j]>'0')
-            	{
-            		j++;
-            	}
-            	else
-            	{
-            		j++;
-            		head++;
-            	}
+                if (number[j]>0)
+                {
+                    l++;
+                    if (l>digit)
+                    {
+                        break;
+                    }
+                }
             }
-            k=k%pSize[index-1];
-            result[n-index]=digit[j];
-            digit[j]='0';
-            index--;
+            result.append(number[j]);
+            number[j]=0;
+            k=k%table[n-i-1];
         }
-        return new String(result);
-    }
-    
-    private void permutationNumber(int []arr, int n)
-    {
-        if (n==0)
-        {
-            return;
-        }
-        else if(n==1)
-        {
-            arr[n]=1;
-            return;
-        }
-        else
-        {
-            permutationNumber(arr, n-1);
-            arr[n]=n*arr[n-1];
-            return;
-        }
+        return result.toString();
     }
 }
