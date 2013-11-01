@@ -1,137 +1,71 @@
-package Solution;
-
-import java.util.HashMap;
-
-public class InterleaveString {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		InterleaveString instance=new InterleaveString();
-		System.out.println(instance.isInterleave("aa", "ab", "aaba"));
-	}
-
-	public boolean isInterleave(String s1, String s2, String s3) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will try recursion first
+public class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // back trace
         if (s1==null || s1.length()<1)
         {
             if (s2==null || s2.length()<1)
             {
-                if (s3==null || s3.length()<1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return s3==null || s3.length()<1;
             }
-            else
+            else if (s3==null || s3.length()<1)
             {
-                if (s3==null || s3.length()<1)
-                {
-                    return false;
-                }
-                else if (s3.length()!=s2.length())
-                {
-                    return false;
-                }
-                else
-                {
-                    for (int i=0; i<s3.length(); i++)
-                    {
-                        if (s2.charAt(i)!=s3.charAt(i))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
+                return false;
+            }
+            else if (s2.length()!=s3.length())
+            {
+                return false;
             }
         }
-        else
+        else if (s2==null || s2.length()<1)
         {
-            if (s2==null || s2.length()<1)
+            if (s3==null || s3.length()<1)
             {
-                if (s3==null || s3.length()<1)
-                {
-                    return false;
-                }
-                else if (s3.length()!=s1.length())
-                {
-                    return false;
-                }
-                else
-                {
-                    for (int i=0; i<s3.length(); i++)
-                    {
-                        if (s1.charAt(i)!=s3.charAt(i))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
+                return false;
             }
-            else
+            else if (s1.length()!=s3.length())
             {
-                if (s3==null || s3.length()<1)
-                {
-                    return false;
-                }
-                else if (s3.length()!=s1.length()+s2.length())
-                {
-                    return false;
-                }
-                else
-                {
-                	buffer=new HashMap<Integer, Boolean>();
-                    return isInterleave(s1, 0, s2, 0, s3, 0);
-                }
+                return false;
             }
         }
+        else if (s3==null || s3.length()<1)
+        {
+            return false;
+        }
+        else if (s1.length()+s2.length()!=s3.length())
+        {
+            return false;
+        }
+        return isInterleave(s1, 0, s2, 0, s3, new HashMap<Integer, Boolean>());
     }
-	
-	// for improvement we will use dynamic programming by a buffer
-	private HashMap<Integer, Boolean> buffer;
     
-    private boolean isInterleave(String s1, int i, String s2, int j, String s3, int k)
+    private boolean isInterleave(String s1, int start1, String s2, int start2, String s3, HashMap<Integer, Boolean> buffer)
     {
-    	if (buffer.containsKey(i*(s2.length()+1)+j))
-    	{
-    		return buffer.get(i*(s2.length()+1)+j);
-    	}
-    	boolean result;
-        if (k==s3.length())
+        if (buffer.containsKey(start1+start2*s1.length()))
         {
-            // we finish the match
-            if (i==s1.length() && j==s2.length())
-            {
-                result=true;
-            }
-            // however some chars of s1 or s2 left out
-            else
-            {
-                result=false;
-            }
+            return buffer.get(start1+start2*s1.length());
         }
-        else if (i<s1.length() && s1.charAt(i)==s3.charAt(k) && isInterleave(s1, i+1, s2, j, s3, k+1))
+        // match complete
+        if (start1>=s1.length() && start2>=s2.length())
         {
-            result=true;
-        }
-        else if (j<s2.length() && s2.charAt(j)==s3.charAt(k) && isInterleave(s1, i, s2, j+1, s3, k+1))
-        {
-            result=true;
+            return true;
         }
         else
         {
-            result=false;
+            // check the current
+            if (start1<s1.length() && s1.charAt(start1)==s3.charAt(start1+start2) && isInterleave(s1, start1+1, s2, start2, s3, buffer))
+            {
+                buffer.put(start1+start2*s1.length(), true);
+                return true;
+            }
+            if (start2<s2.length() && s2.charAt(start2)==s3.charAt(start1+start2) && isInterleave(s1, start1, s2, start2+1, s3, buffer))
+            {
+                buffer.put(start1+start2*s1.length(), true);
+                return true;
+            }
+            buffer.put(start1+start2*s1.length(), false);
+            return false;
         }
-        buffer.put(i*(s2.length()+1)+j, result);
-        return result;
     }
 }
