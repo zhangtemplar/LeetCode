@@ -1,91 +1,46 @@
-package Solution;
+import java.util.StringTokenizer;
 
-import java.util.Stack;
-
-public class SimplifyPath {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String simplifyPath(String path) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use stacks to store the path
+public class Solution {
+    public String simplifyPath(String path) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // we could use a stack for this purpose, we seperate each string with /
+        // if we met ., we ignore it, if we met .., we pop the stack
         if (path==null || path.length()<1)
         {
             return path;
         }
         Stack<String> stack=new Stack<String>();
-        int i=1;
-        int j=0;
-        int flag_dot=0;
-        boolean flag_char=false;
-        while(i<path.length())
+        StringTokenizer token=new StringTokenizer(path, "/");
+        while(token.hasMoreTokens())
         {
-            if (path.charAt(i)=='/')
+            String str=token.nextToken();
+            if (str.equals(".."))
             {
-                // this seperates it from the previous
-                if (flag_dot==0 && flag_char)
+                if (!stack.isEmpty())
                 {
-                    stack.push(path.substring(j, i));
+                    stack.pop();
                 }
-                flag_dot=0;
-                flag_char=false;
-                j=i;
             }
-            else if (path.charAt(i)=='.')
+            else if(str.equals("."))
             {
-                if (flag_dot==1)
-                {
-                    // this is ..
-                    if (!stack.isEmpty())
-                    {
-                        stack.pop();
-                    }
-                    flag_dot++;
-                }
-                else if(flag_dot==0)
-                {
-                    flag_dot++;
-                }
-                else
-                {
-                    // error case
-                    flag_dot++;
-                    break;
-                }
+                // do nothing
             }
             else
             {
-                flag_dot=0;
-                flag_char=true;
+                stack.push(str);
             }
-            // a single dot and the other cases can be skipped
-            i++;
         }
-        // post-processing
-        // if the last segement is not ended with / or ,
-        if (flag_dot==0 && path.charAt(i-1)!='/')
-        {
-            stack.push(path.substring(j, i));
-        }
-        // convert it to the string
-        StringBuffer result=new StringBuffer();
         if (stack.isEmpty())
         {
-            result.append('/');
+            return new String("/");
         }
-        else
+        // simply the path
+        StringBuffer result=new StringBuffer();
+        while(!stack.isEmpty())
         {
-            while(!stack.isEmpty())
-            {
-                result.insert(0, stack.pop());
-            }
+            result.insert(0, stack.pop());
+            result.insert(0, "/");
         }
         return result.toString();
     }
