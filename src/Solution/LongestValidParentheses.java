@@ -1,83 +1,84 @@
-package Solution;
-
-import java.util.Stack;
-
-public class LongestValidParentheses {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public int longestValidParentheses(String s) {
-		// Start typing your Java solution below
-        // DO NOT write main() function
-        // we will use the stack to store the result
-        // if we meet left, we push into the stack
-        // if we meet right, we check the top,
-        //      if it is left, we pop it out and increase counter by 2
-        //      otherwise, we know the valid parenthese terminate here and reset count
-        // check the input
+public class Solution {
+    public int longestValidParentheses(String s) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
         if (s==null || s.length()<2)
         {
             return 0;
         }
-        // stack to store the parenthese
-        Stack<Integer> stack=new Stack<Integer>();
-        int result=0;
-        int count=0;;
-        int i;
-        for (i=0; i<s.length(); i++)
+        // we first use ) to seperate the string into substrings, where each ) is matched
+        int balance=0;
+        int max=0;
+        int length=0;
+        int last=0;
+        for (int i=0; i<s.length(); i++)
         {
             if (s.charAt(i)=='(')
             {
-                stack.push(count);
+                balance++;
+                length++;
             }
-            else if (s.charAt(i)==')')
+            else if(balance>0)
             {
-                // check the stack first
-                if (!stack.isEmpty())
-                {
-                    // it is a left
-                    stack.pop();
-                    count+=2;
-                }
-                else
-                {
-                    // save the previous result best
-                    if (result<count)
-                    {
-                        result=count;
-                    }
-                    // there is no valid left there
-                    // clear the stack, reset the counter
-                    stack.clear();
-                    count=0;
-                }
+                balance--;
+                length++;
             }
             else
             {
-                // illegal input here
-                break;
+                if (max<length)
+                {
+                    max=length;
+                }
+                last=i+1;
+                length=0;
             }
         }
-        // post-processing: for the unmatched left
-        while(!stack.isEmpty())
+        // we have found some extra (s, we need to find them out
+        if (balance!=0)
         {
-            if (result<count-stack.peek())
+            length=longestValidParentheses(s, last, s.length()-1);
+            if (max<length)
             {
-                result=count-stack.peek();
+                max=length;
             }
-            count=stack.pop();
         }
-        if (result<count)
+        if (max<length)
         {
-            result=count;
+            max=length;
         }
-        // result
-        return result;
+        return max;
+    }
+    
+    private int longestValidParentheses(String s, int start, int end)
+    {
+        int balance=0;
+        int max=0;
+        int length=0;
+        for (int i=end; i>=start; i--)
+        {
+            if (s.charAt(i)==')')
+            {
+                balance++;
+                length++;
+            }
+            else if(balance>0)
+            {
+                balance--;
+                length++;
+            }
+            else
+            {
+                if (max<length)
+                {
+                    max=length;
+                }
+                length=0;
+            }
+        }
+        if (max<length)
+        {
+            max=length;
+        }
+        return max;
     }
 }
