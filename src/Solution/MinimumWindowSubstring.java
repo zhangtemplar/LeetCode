@@ -1,238 +1,190 @@
-package Solution;
-
-import java.util.Arrays;
-
-public class MinimumWindowSubstring {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		MinimumWindowSubstring instance=new MinimumWindowSubstring();
-		System.out.println(instance.minWindowFast("xeaifhaqslynbcwxncwgeezbrjorzyuwevejcecuscjvgfutkrcqxbromihlgcjnzpybwcxqeglknhgzyiqxljnyrvlazvnyklbgoywugjftrltrvlrgueeobsoandazqbigbgbhqgdjtycojtwfydtbvjekmejdirjlymvquybnyddjxaoxfkyatckijvlrnwcnjxfdxgtvjweiyvfdhefaipkrnviaunpfmukkcdhlcmwcjbgqhnsqfdhsasuwhjbtfmdhrluvzqykugcbtutyzdqcxkyevaxcodjhogdpwbzsjducxpdzsvbpizvfbtirwtzmzebyhcqqfmueczdwveofgjkhesbamaolgrlpvcfcqbhubmtythdzspizijbwlqjrjvgfznhprqmudfsyoxzimhhutjsebcykxgpywznnpbhuizuwythkbohwzzacbanyhewdfmsvpzryamuyhdkkurgvrjysjntqrrvxfnuvonvqbrqjvbvpucklligu", "xbnpukocakzqzuhdlxoga"));
-		System.out.println(instance.minWindow("xeaifhaqslynbcwxncwgeezbrjorzyuwevejcecuscjvgfutkrcqxbromihlgcjnzpybwcxqeglknhgzyiqxljnyrvlazvnyklbgoywugjftrltrvlrgueeobsoandazqbigbgbhqgdjtycojtwfydtbvjekmejdirjlymvquybnyddjxaoxfkyatckijvlrnwcnjxfdxgtvjweiyvfdhefaipkrnviaunpfmukkcdhlcmwcjbgqhnsqfdhsasuwhjbtfmdhrluvzqykugcbtutyzdqcxkyevaxcodjhogdpwbzsjducxpdzsvbpizvfbtirwtzmzebyhcqqfmueczdwveofgjkhesbamaolgrlpvcfcqbhubmtythdzspizijbwlqjrjvgfznhprqmudfsyoxzimhhutjsebcykxgpywznnpbhuizuwythkbohwzzacbanyhewdfmsvpzryamuyhdkkurgvrjysjntqrrvxfnuvonvqbrqjvbvpucklligu", "xbnpukocakzqzuhdlxoga"));
-		System.out.println(instance.minWindowSlow("xeaifhaqslynbcwxncwgeezbrjorzyuwevejcecuscjvgfutkrcqxbromihlgcjnzpybwcxqeglknhgzyiqxljnyrvlazvnyklbgoywugjftrltrvlrgueeobsoandazqbigbgbhqgdjtycojtwfydtbvjekmejdirjlymvquybnyddjxaoxfkyatckijvlrnwcnjxfdxgtvjweiyvfdhefaipkrnviaunpfmukkcdhlcmwcjbgqhnsqfdhsasuwhjbtfmdhrluvzqykugcbtutyzdqcxkyevaxcodjhogdpwbzsjducxpdzsvbpizvfbtirwtzmzebyhcqqfmueczdwveofgjkhesbamaolgrlpvcfcqbhubmtythdzspizijbwlqjrjvgfznhprqmudfsyoxzimhhutjsebcykxgpywznnpbhuizuwythkbohwzzacbanyhewdfmsvpzryamuyhdkkurgvrjysjntqrrvxfnuvonvqbrqjvbvpucklligu", "xbnpukocakzqzuhdlxoga"));
-	}
-
-	public String minWindowFast(String S, String T) {
-        // Start typing your Java solution below
-        // DO NOT write main() function/
-        // we use brute force search, where the complexity is O(N^2)
-        if (T==null || T.length()<1)
+public class Solution {
+    public String minWindow(String S, String T) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // we will first set the window to the whole S
+        // if the windows contains necessary char of T
+        // we shrink on the left until the condition holds
+        // otherwise, we take a step back and shrink on the right
+        if (S==null || T==null || S.length()<T.length())
         {
-            return new String("");
+            return "";
         }
-        else if (S==null || S.length()<1 || S.length()<T.length())
+        int left=0;
+        int right=T.length()-1;
+        QuickTable table=new QuickTable();
+        for (int i=0; i<T.length(); i++)
         {
-            return new String("");
+            table.remove(T.charAt(i));
+            table.add(S.charAt(i));
         }
-        else
+        int min=Integer.MAX_VALUE;
+        int []result=new int[2];
+        result[0]=0;
+        result[1]=S.length()-1;
+        while(right<S.length())
         {
-            // build the pattern
-        	QuickCountTable<Character> target=new QuickCountTable<Character>();
-            for (int i=0; i<T.length(); i++)
+            if (table.isValid())
             {
-            	target.add(T.charAt(i));
-            }
-            for (int i=0; i<T.length(); i++)
-            {
-            	target.decrease(S.charAt(i));
-            }
-            int min_start, min_end;
-            min_start=-1;
-            min_end=S.length()+1;
-            boolean found=false;
-            int start, end;
-            start=0;
-            end=T.length();
-            while(end<=S.length())
-            {
-                // we found a potential window
-                // check whether it is the smallest
-                if (target.isValid())
+                if (min>right-left+1)
                 {
-                    if ((min_end-min_start)>(end-start))
-                    {
-                        min_start=start;
-                        min_end=end;
-                        found=true;
-                    }
-                    // find a new window by shrinking the window by 1 on the left
-                    target.increase(S.charAt(start));
-                    start++;
+                    min=right-left+1;
+                    result[0]=left;
+                    result[1]=right;
                 }
-                else if (end<S.length())
-                {
-                    // we need to expand the window by 1 on the right
-                    target.decrease(S.charAt(end));
-                    end++;
-                }
-                else
-                {
-                	break;
-                }
+                table.remove(S.charAt(left++));
             }
-            if (found)
+            else if(right<S.length()-1)
             {
-                return S.substring(min_start, min_end);
+                table.add(S.charAt(++right));
             }
             else
             {
-                return new String("");
+                break;
             }
         }
-    }
-	
-	public String minWindow(String S, String T) {
-        // Start typing your Java solution below
-        // DO NOT write main() function/
-        // we use brute force search, where the complexity is O(N^2)
-        if (T==null || T.length()<1)
+        if (min>S.length())
         {
-            return new String("");
-        }
-        else if (S==null || S.length()<1 || S.length()<T.length())
-        {
-            return new String("");
+            return "";
         }
         else
         {
-            // build the pattern
-            int[] target=new int[256];
-            for (int i=0; i<T.length(); i++)
-            {
-                target[T.charAt(i)]++;
-                target[S.charAt(i)]--;
-            }
-            int min_start, min_end;
-            min_start=-1;
-            min_end=S.length()+1;
-            boolean found=false;
-            // instead of check the target for each possible sliding window
-            // we record the first unmatch of the target
-            // if the current change of the sliding window fix this unmatch
-            // then we check the match of this sliding window
-            // otherwise, we skip it
-            int last_unmatch=-1;
-            int start, end;
-            start=0;
-            end=T.length();
-            while(end<=S.length())
-            {
-                // we found a potential window
-                // check whether it is the smallest
-            	if (last_unmatch<0 || target[last_unmatch]<=0)
-            	{
-            		last_unmatch=isValid(target);
-            	}
-                if (last_unmatch<0)
-                {
-                    if ((min_end-min_start)>(end-start))
-                    {
-                        min_start=start;
-                        min_end=end;
-                        found=true;
-                    }
-                    // find a new window by shrinking the window by 1 on the left
-                    target[S.charAt(start)]++;
-                    start++;
-                }
-                else if (end<S.length())
-                {
-                    // we need to expand the window by 1 on the right
-                    target[S.charAt(end)]--;
-                    end++;
-                }
-                else
-                {
-                	break;
-                }
-            }
-            if (found)
-            {
-                return S.substring(min_start, min_end);
-            }
-            else
-            {
-                return new String("");
-            }
+            return S.substring(result[0], result[1]+1);
         }
     }
+}
+
+class QuickTable
+{
+    private TableNode head, tail;
+    private HashMap<Character, TableNode> table;
     
-    private int isValid(int[] target)
+    public QuickTable()
     {
-    	int result=-1;
-        for (int i=0; i<target.length; i++)
-        {
-            if (target[i]>0)
-            {
-                return i;
-            }
-        }
-        return result;
+        head=null;
+        tail=null;
+        table=new HashMap<Character, TableNode>();
     }
     
-	public String minWindowSlow(String S, String T) {
-        // Start typing your Java solution below
-        // DO NOT write main() function/
-        // we use brute force search, where the complexity is O(N^2)
-        if (T==null || T.length()<1)
+    // remove the couning of a word
+    public void remove(char c)
+    {
+        // check whether we have a count for it
+        if (table.containsKey(c))
         {
-            return new String("");
-        }
-        else if (S==null || S.length()<1)
-        {
-            return new String("");
+            // found a node
+            TableNode node=table.get(c);
+            // decrease the count
+            node.val--;
+            if (node.val>=0 || node==head)
+            {
+            }
+            // if it converts to -1, we move it to the head
+            else if(node==tail)
+            {
+                tail=node.prev;
+                node.prev.next=null;
+                node.prev=null;
+                head.prev=node;
+                node.next=head;
+                head=node;
+            }
+            else
+            {
+                node.prev.next=node.next;
+                node.next.prev=node.prev;
+                node.next=head;
+                head.prev=node;
+                head=node;
+            }
         }
         else
         {
-            // build the pattern
-            int[] target=new int[256];
-            for (int i=0; i<T.length(); i++)
+            TableNode node=new TableNode(c, -1);
+            table.put(c, node);
+            node.next=head;
+            if (head!=null)
             {
-                target[T.charAt(i)]++;
+            	head.prev=node;
             }
-            // we use brute force search
-            boolean founded=false;
-            for (int i=T.length(); i<=S.length(); i++)
-            {
-                int[] digits=Arrays.copyOf(target, target.length);
-                // check the string within range [j, i+j)
-                // we can use cumulative search method
-                // inital: [0, i)
-                for (int j=0; j<i; j++)
-                {
-                    digits[S.charAt(j)]--;
-                }
-                // we found the solution
-                founded=true;
-                for (int k=0; k<digits.length; k++)
-                {
-                    founded=founded&(digits[k]<=0);
-                }
-                if (founded)
-                {
-                    return S.substring(0, i);
-                }
-                // the main
-                for (int j=1; j+i<=S.length(); j++)
-                {
-                    digits[S.charAt(j-1)]++;
-                    digits[S.charAt(j+i-1)]--;
-                    // check the solution
-                    founded=true;
-                    for (int k=0; k<digits.length; k++)
-                    {
-                        founded=founded&(digits[k]<=0);
-                    }
-                    if (founded)
-                    {
-                        return S.substring(j, i+j);
-                    }
-                }
-            }
-            return new String("");
+            head=node;
         }
+        // for singleton case
+        if (tail==null)
+        {
+            tail=head;
+        }
+    }
+    
+    public void add(char c)
+    {
+        // check whether we have a count for it
+        if (table.containsKey(c))
+        {
+            // found a node
+            TableNode node=table.get(c);
+            node.val++;
+            // decrease the count
+            if (node.val<0 || node==tail)
+            {
+            }
+            // if it converts to 0, we move it to the tail
+            else if(node==head)
+            {
+                head=head.next;
+                head.prev=null;
+                node.next=null;
+                node.prev=tail;
+                tail.next=node;
+                tail=node;
+            }
+            else
+            {
+                node.prev.next=node.next;
+                node.next.prev=node.prev;
+                node.prev=tail;
+                tail.next=node;
+                tail=node;
+            }
+        }
+        else
+        {
+            TableNode node=new TableNode(c, 1);
+            table.put(c, node);
+            node.prev=tail;
+            if (tail!=null)
+            {
+            	tail.next=node;
+        	}
+            tail=node;
+        }
+        // for singleton case
+        if (head==null)
+        {
+            head=tail;
+        }
+    }
+    
+    public boolean isValid()
+    {
+        if (head!=null)
+        {
+            return head.val>=0;
+        }
+        return true;
+    }
+}
+
+class TableNode
+{
+    public char c;
+    public int val;
+    public TableNode next, prev;
+    public TableNode(char ch, int x)
+    {
+        c=ch;
+        val=x;
+        next=null;
+        prev=null;
     }
 }
