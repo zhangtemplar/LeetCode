@@ -1,96 +1,190 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-/**
- * we shall use the similar the algorithm as previous, instead, we 
- * return the # cuts instead of the detailed cuts.
- * @author qzhang53
- *
- */
-public class PalindromePartitioningII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		PalindromePartitioningII instance=new PalindromePartitioningII();
-		String s="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-		System.out.println(instance.minCut(s));
-	}
-
-	public int minCut(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        if (s==null || s.length()<1)
+public class Solution {
+    public String minWindow(String S, String T) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        // we will first set the window to the whole S
+        // if the windows contains necessary char of T
+        // we shrink on the left until the condition holds
+        // otherwise, we take a step back and shrink on the right
+        if (S==null || T==null || S.length()<T.length())
         {
-            return 0;
+            return "";
         }
-        is_palindrome=new HashMap<SubString, Boolean>();
-        buffer_partition=new HashMap<SubString, Integer>();
-        return minCut(s, 0);
-    }
-    
-    // this is the buffer for quickly determining whether is a palindrome of not
-    private HashMap<SubString, Boolean> is_palindrome;
-    
-    // this buffer stores the minimum # cut for the substring
-    private HashMap<SubString, Integer> buffer_partition;
-    
-    private int minCut(String s, int start) 
-    {
-        if (buffer_partition.containsKey(new SubString(start, s.length()-1, s.length())))
+        int left=0;
+        int right=T.length()-1;
+        QuickTable table=new QuickTable();
+        for (int i=0; i<T.length(); i++)
         {
-            return buffer_partition.get(new SubString(start, s.length()-1, s.length()));
+            table.remove(T.charAt(i));
+            table.add(S.charAt(i));
         }
-        int result=Integer.MAX_VALUE;
-        if (start==s.length()-1)
+        int min=Integer.MAX_VALUE;
+        int []result=new int[2];
+        result[0]=0;
+        result[1]=S.length()-1;
+        while(right<S.length())
         {
-            return 0;
-        }
-        else if(start>=s.length())
-    	{
-        	return -1;
-    	}
-        for (int i=start; i<s.length(); i++)
-        {
-            if (isPalindrome(s, start, i))
+            if (table.isValid())
             {
-                int base=minCut(s, i+1);
-                if (result>base)
+                if (min>right-left+1)
                 {
-                	result=base;
+                    min=right-left+1;
+                    result[0]=left;
+                    result[1]=right;
                 }
+                table.remove(S.charAt(left++));
+            }
+            else if(right<S.length()-1)
+            {
+                table.add(S.charAt(++right));
+            }
+            else
+            {
+                break;
             }
         }
-        result++;
-        buffer_partition.put(new SubString(start, s.length()-1, s.length()), result);
-        return result;
+        if (min>S.length())
+        {
+            return "";
+        }
+        else
+        {
+            return S.substring(result[0], result[1]+1);
+        }
+    }
+}
+
+class QuickTable
+{
+    private TableNode head, tail;
+    private HashMap<Character, TableNode> table;
+    
+    public QuickTable()
+    {
+        head=null;
+        tail=null;
+        table=new HashMap<Character, TableNode>();
     }
     
-    private boolean isPalindrome(String s, int start, int end)
+    // remove the couning of a word
+    public void remove(char c)
     {
-        if (is_palindrome.containsKey(new SubString(start, end, s.length())))
+        // check whether we have a count for it
+        if (table.containsKey(c))
         {
-            return is_palindrome.get(new SubString(start, end, s.length()));
-        }
-        if (start>=end)
-        {
-            return true;
-        }
-        int i=start;
-        int j=end;
-        for(; i<j; i++, j--)
-        {
-            if (s.charAt(i)!=s.charAt(j))
+            // found a node
+            TableNode node=table.get(c);
+            // decrease the count
+            node.val--;
+            if (node.val>=0 || node==head)
             {
-                is_palindrome.put(new SubString(start, end, s.length()), false);
-                return false;
+            }
+            // if it converts to -1, we move it to the head
+            else if(node==tail)
+            {
+                tail=node.prev;
+                node.prev.next=null;
+                node.prev=null;
+                head.prev=node;
+                node.next=head;
+                head=node;
+            }
+            else
+            {
+                node.prev.next=node.next;
+                node.next.prev=node.prev;
+                node.next=head;
+                head.prev=node;
+                head=node;
             }
         }
-        is_palindrome.put(new SubString(start, end, s.length()), true);
+        else
+        {
+            TableNode node=new TableNode(c, -1);
+            table.put(c, node);
+            node.next=head;
+            if (head!=null)
+            {
+            	head.prev=node;
+            }
+            head=node;
+        }
+        // for singleton case
+        if (tail==null)
+        {
+            tail=head;
+        }
+    }
+    
+    public void add(char c)
+    {
+        // check whether we have a count for it
+        if (table.containsKey(c))
+        {
+            // found a node
+            TableNode node=table.get(c);
+            node.val++;
+            // decrease the count
+            if (node.val<0 || node==tail)
+            {
+            }
+            // if it converts to 0, we move it to the tail
+            else if(node==head)
+            {
+                head=head.next;
+                head.prev=null;
+                node.next=null;
+                node.prev=tail;
+                tail.next=node;
+                tail=node;
+            }
+            else
+            {
+                node.prev.next=node.next;
+                node.next.prev=node.prev;
+                node.prev=tail;
+                tail.next=node;
+                tail=node;
+            }
+        }
+        else
+        {
+            TableNode node=new TableNode(c, 1);
+            table.put(c, node);
+            node.prev=tail;
+            if (tail!=null)
+            {
+            	tail.next=node;
+        	}
+            tail=node;
+        }
+        // for singleton case
+        if (head==null)
+        {
+            head=tail;
+        }
+    }
+    
+    public boolean isValid()
+    {
+        if (head!=null)
+        {
+            return head.val>=0;
+        }
         return true;
+    }
+}
+
+class TableNode
+{
+    public char c;
+    public int val;
+    public TableNode next, prev;
+    public TableNode(char ch, int x)
+    {
+        c=ch;
+        val=x;
+        next=null;
+        prev=null;
     }
 }
