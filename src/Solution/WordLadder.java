@@ -1,71 +1,59 @@
-package Solution;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
-public class WordLadder {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String start="a";
-		String end="c";
-		HashSet<String> dict=new HashSet<String>();
-		dict.add("a");
-		dict.add("b");
-		dict.add("c");
-		WordLadder instance=new WordLadder();
-		System.out.println(instance.ladderLength(start, end, dict));
-	}
-
-	public int ladderLength(String start, String end, HashSet<String> dict) {
+public class Solution {
+    public int ladderLength(String start, String end, HashSet<String> dict) {
         // Start typing your Java solution below
         // DO NOT write main() function
-        // it is a shortest path problem
-        // we can formulate the problem as follows: we build a graph
-        // where node is the string, and two nodes are conneced if and only if
-        // the corresponding two strings are different in only one letter
-        // the algorithm starts at start and ends at end
-        // we will need a hashset to mark the visited string
-        // and a queue to store the to be visited string
-        HashMap<String, Integer> visited=new HashMap<String, Integer>();
-        LinkedList<String> queue=new LinkedList<String>();
-        if (start==null || end==null || start.length()!=end.length())
+        if (start.equals(end))
         {
-            return 0;
+            return 2;
         }
-        // we also need to store the distance from the start
-        visited.put(start, 1);
+        // we will bfs search
+        // the graph will have every word in the dictionary and start, end as the node
+        // we add edge between two nodes, if they are only different by 1 letter
+        HashSet<String> visited=new HashSet<String>();
+        HashMap<String, Integer> depth=new HashMap<String, Integer>();
+        LinkedList<String> queue=new LinkedList<String>();
+        depth.put(start, 1);
         queue.add(start);
         while(!queue.isEmpty())
         {
-            String s=queue.remove();
-            char[] chars=s.toCharArray();
-            for (int i=0; i<s.length(); i++)
+            // process the head
+            String str=queue.remove();
+            if (str.equals(end))
             {
-                char old=chars[i];
-                for (char c='a'; c<='z'; c++)
+                return depth.get(str);
+            }
+            if (visited.contains(str))
+            {
+                continue;
+            }
+            visited.add(str);
+            // this node is not visited before, we add its neighor to the queue
+            char []tmp=str.toCharArray();
+            // we try to alter one of its letter
+            for (int i=0; i<tmp.length; i++)
+            {
+                for (char j='a'; j<='z'; j++)
                 {
-                    chars[i]=c;
-                    String s2=new String(chars);
-                    if (s2.equals(end))
+                    tmp[i]=j;
+                    String s=new String(tmp);
+                    // check it is in the dictionary and not visited yet
+                    if (dict.contains(s) && !visited.contains(s) && !depth.containsKey(s))
                     {
-                        // we found it
-                        return visited.get(s)+1;
-                    }
-                    if (dict.contains(s2) && !visited.containsKey(s2))
-                    {
-                        // add it to the queue
-                        visited.put(s2, visited.get(s)+1);
-                        queue.add(s2);
+                        if (s.equals(end))
+                        {
+                            return depth.get(str)+1;
+                        }
+                        // add this string to the queue
+                        queue.add(s);
+                        depth.put(s, depth.get(str)+1);
                     }
                 }
-                chars[i]=old;
+                // recovery the altered char
+                tmp[i]=str.charAt(i);
             }
         }
+        // we finished the BFS from start, but haven't find end
+        // so there is no such transform there
         return 0;
     }
 }
