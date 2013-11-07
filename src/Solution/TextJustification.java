@@ -1,112 +1,77 @@
-package Solution;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-public class TextJustification {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		TextJustification instance=new TextJustification();
-		String[] words={"Here","is","an","example","of","text","justification."};
-		ArrayList<String> result=instance.fullJustify(words, 16);
-		System.out.println(result);
-	}
-
-	public ArrayList<String> fullJustify(String[] words, int L) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public ArrayList<String> fullJustify(String[] words, int L) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
         ArrayList<String> result=new ArrayList<String>();
-        if (words==null || words.length<1 || L<1)
+        if (words==null || words.length<1 || L<0)
         {
-            result.add(new String());
             return result;
         }
-        // main algorithm
-        // the current word and the word of the head
         int i=0;
-        int j=0;
-        int len=0;
-        while (i<words.length)
+        while(i<words.length)
         {
-            if (len+words[i].length()>L)
+            // find the set of words forms the current line
+            int count=0;
+            int j=i;
+            while(j<words.length && count+words[j].length()+(j-i)<=L)
             {
-                // the words in range [j i) forms a line
-                if (i==j)
+                count+=words[j].length();
+                j++;
+            }
+            StringBuffer line=new StringBuffer();
+            // L is too small to fit one word
+            if (j==i)
+            {
+                return new ArrayList<String>();
+            }
+            // the last line
+            else if (j>=words.length || j==i+1)
+            {
+                for (int l=i; l<j; l++)
                 {
-                    // we would fail the case
-                    // because we not even pack the a single words in a line
-                    return result;
+                    if (l!=i)
+                    {
+                        line.append(" ");
+                    }
+                    line.append(words[l]);
                 }
-                else
+                // add the space when necessary
+                for (int l=count+(j-i-1); l<L; l++)
                 {
-                    StringBuffer line=new StringBuffer();
-                    if (i-j-1==0)
-                    {
-                        line.append(words[j]);
-                        // append space after
-                        char []spaces=new char[L-words[j].length()];
-                        Arrays.fill(spaces, ' ');
-                        line.append(spaces);
-                    }
-                    else
-                    {
-                    	int divisor_space=(L-len+i-j)/(i-j-1);
-                        int remain_space=(L-len+i-j)%(i-j-1);
-                        for (int k=j; k<i; k++)
-                        {
-                            if (k>j)
-                            {
-                                char[] spaces;
-                                if (remain_space>k-j-1)
-                                {
-                                    spaces=new char[divisor_space+1];
-                                }
-                                else
-                                {
-                                    spaces=new char[divisor_space];
-                                }
-                                Arrays.fill(spaces, ' ');
-                                line.append(spaces);
-                            }
-                            line.append(words[k]);
-                        }
-                    }
-                    result.add(line.toString());
-                    len=0;
-                    j=i;
+                    line.append(" ");
                 }
+                result.add(line.toString());
             }
             else
             {
-                // 1 for the must-have space between two words
-                len+=words[i].length()+1;
-                i++;
+                // compute the # of space for the empty slots
+                int space=(L-count)/(j-i-1);
+                int seperator=L-count-space*(j-i-1);
+                char []slot=new char[space];
+                for (int l=0; l<slot.length; l++)
+                {
+                    slot[l]=' ';
+                }
+                String slots=new String(slot);
+                for (int l=i; l<j; l++)
+                {
+                    // we make sure the left part has no fewer spaces than right
+                    if (l!=i && l-i<=seperator)
+                    {
+                        line.append(slots);
+                        line.append(" ");
+                    }
+                    // for right part
+                    else if(l!=i)
+                    {
+                        line.append(slots);
+                    }
+                    line.append(words[l]);
+                }
+                result.add(line.toString());
             }
+            i=j;
         }
-        // for the last line
-        // we have some words unprocessed
-        StringBuffer line=new StringBuffer();
-        // we need to evenly distribute the space
-        len=0;
-        for (int k=j; k<i; k++)
-        {
-            if (k>j)
-            {
-                line.append(" ");
-                len++;
-            }
-            line.append(words[k]);
-            len+=words[k].length();
-        }
-        // append spaces to the end
-        char []spaces=new char[L-len];
-        Arrays.fill(spaces, ' ');
-        line.append(spaces);
-        result.add(line.toString());
         return result;
     }
 }
