@@ -1,74 +1,61 @@
-package Solution;
-
-public class String2Integer {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println(atoi("    10522545459"));
-	}
-
-	public static int atoi(String str) {
-		// Start typing your Java solution below
-        // DO NOT write main() function
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        int sign=1;
-        // whether the symbol is already visisted
-        boolean flag=true;
-        int result=0;
-        for (int i=0; i<str.length(); i++)
+public class Solution {
+    public int atoi(String str) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        if (str==null || str.length()<1)
         {
-            if (flag && str.charAt(i)==' ')
+            return 0;
+        }
+        long result=0;
+        // skip the whitespace in the beginning
+        int i=0;
+        while(i<str.length())
+        {
+            if (str.charAt(i)!=' ')
             {
-                // empty space at the left, skip it
-                continue;
+                break;
             }
-            else if (str.charAt(i)=='-')
+            i++;
+        }
+        if (i>=str.length())
+        {
+            return 0;
+        }
+        // check the sign
+        int sign=1;
+        if (str.charAt(i)=='-')
+        {
+            sign=-1;
+            i++;
+        }
+        else if(str.charAt(i)=='+')
+        {
+            i++;
+        }
+        while(i<str.length())
+        {
+            // digits found
+            if (str.charAt(i)>='0' && str.charAt(i)<='9')
             {
-                // f;p the sign
-                if (!flag)
+                result=result*10+(str.charAt(i)-'0');
+                // check the overflow
+                if (sign>0 && result>=Integer.MAX_VALUE)
                 {
-                    return 0;
+                    return Integer.MAX_VALUE;
                 }
-                sign=-1*sign;
-                flag=false;
-            }
-            else if (str.charAt(i)=='+')
-            {
-                // nothing happened for the sign
-                if (!flag)
+                else if(sign<0 && -result<=Integer.MIN_VALUE)
                 {
-                    return 0;
+                    return Integer.MIN_VALUE;
                 }
-                flag=false;
-                continue;
+                // so far so good
+                i++;
             }
-            else if (str.charAt(i)>='0' && str.charAt(i)<='9')
-            {
-                // the digit
-            	if (result>214748364 || (result==214748364 && (str.charAt(i)-'0')>7))
-            	{
-            		if (sign>0)
-                    {
-                        return Integer.MAX_VALUE;
-                    }
-                    else
-                    {
-                        return Integer.MIN_VALUE;
-                    }
-            	}
-                result=result*10+str.charAt(i)-'0';
-                flag=false;
-            }
+            // invalid input found
             else
             {
-                // all other chars are not allowed
                 break;
             }
         }
-        return sign*result;
+        return (int)(sign*result);
     }
 }
