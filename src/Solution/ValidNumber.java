@@ -1,116 +1,99 @@
-package Solution;
-
-public class ValidNumber {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		ValidNumber instance=new ValidNumber();
-//		System.out.println(instance.isNumber("2.3."));
-//		System.out.println(instance.isNumber("    1.2    0"));
-//		System.out.println(instance.isNumber("1"));
-		System.out.println(instance.isNumber(" 0.1 "));
-//		System.out.println(instance.isNumber("1 a"));
-//		System.out.println(instance.isNumber("abc"));
-//		System.out.println(instance.isNumber("4e10"));
-	}
-
-	public boolean isNumber(String s) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+public class Solution {
+    public boolean isNumber(String s) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
         if (s==null || s.length()<1)
         {
             return false;
         }
-        // whether we have met any none space before
-        int flag_space=0;
-        // whether we have met the sign before
-        int flag_sign=0;
-        // whether we have met the e before
-        int flag_e=0;
-        // whether we have met the dot before
-        int flag_dot=0;
-        // whether we have detected at least a digit
-        int flag_digit=0;
-        for (int i=0; i<s.length(); i++)
+        // skip the empty space in the top
+        int i=0;
+        while(i<s.length() && s.charAt(i)==' ')
         {
-            // skip the space at the head
-            if (s.charAt(i)==' ')
+            i++;
+        }
+        if (i>=s.length())
+        {
+            return false;
+        }
+        // skip the sign
+        if (s.charAt(i)=='-' || s.charAt(i)=='+')
+        {
+            i++;
+        }
+        boolean before_e=false;
+        boolean after_e=false;
+        boolean found_e=false;
+        boolean found_dot=false;
+        boolean before_dot=false;
+        boolean after_dot=false;
+        while(i<s.length())
+        {
+            // nonnumeric
+            if (s.charAt(i)<'0' || s.charAt(i)>'9')
             {
-                flag_space++;
-            }
-            else
-            {
-                if(s.charAt(i)=='+' || s.charAt(i)=='-')
+                // found sign and this is the first sign after e
+                if ((s.charAt(i)=='-' || s.charAt(i)=='+') && found_e && s.charAt(i-1)=='e')
                 {
-                    if(flag_sign==0)
+                    //
+                }
+                // found e and no e found before
+                else if (!found_e && before_e && s.charAt(i)=='e')
+                {
+                    found_e=true;
+                }
+                // found dot and no dot found before, also this dot should before e
+                else if (!found_e & !found_dot && s.charAt(i)=='.')
+                {
+                    found_dot=true;
+                }
+                // found empty space again, then all the remaining should be empty space
+                else if(s.charAt(i)==' ')
+                {
+                    // we found space, we need to check all the remaining is space
+                    while(i<s.length() && s.charAt(i)==' ')
                     {
-                        flag_sign++;
+                        i++;
                     }
-                    else
+                    if ( i<s.length())
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    flag_sign++;
-                    if (s.charAt(i)=='e' || s.charAt(i)=='E')
-                    {
-                        if(flag_e==0)
-                        {
-                            flag_e++;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (s.charAt(i)=='.')
-                        {
-                            if (flag_dot==0)
-                            {
-                                flag_dot++;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            if (s.charAt(i)<'0' || s.charAt(i)>'9')
-                            {
-                                return false;
-                            }
-                            else
-                            {
-                            	if (flag_space>0 && flag_digit>0)
-                            	{
-                            		// if we have met a digit and space after the digit, then we met a digit again
-                            		// we should fail this case
-                            		return false;
-                            	}
-                            	else if (flag_space>0)
-                            	{
-                            		// we met the first digit after the space
-                            		// set the flag for space after digit as false
-                            		flag_space=0;
-                            		flag_digit++;
-                            	}
-                            	// ordinary case
-                            	// we met the digit before but not space after the digit
-                                flag_digit++;
-                            }
-                        }
-                    }
+                    return false;
                 }
             }
+            else 
+            {
+                if (found_e)
+                {
+                    after_e=true;
+                }
+                else
+                {
+                    before_e=true;
+                }
+                if (found_dot)
+                {
+                    after_dot=true;
+                }
+                else
+                {
+                    before_dot=true;
+                }
+            }
+            i++;
         }
-        return flag_digit==0;
+        if (found_e)
+        {
+            return after_e;
+        }
+        if (found_dot)
+        {
+            return after_dot || before_dot;
+        }
+        return true;
     }
 }
