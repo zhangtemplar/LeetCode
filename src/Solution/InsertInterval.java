@@ -1,84 +1,73 @@
-package Solution;
-
-import java.util.ArrayList;
-
-public class InsertInterval {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<Interval> insert(ArrayList<Interval> intervals, Interval newInterval) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+public class Solution {
+    public ArrayList<Interval> insert(ArrayList<Interval> intervals, Interval newInterval) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
         ArrayList<Interval> result=new ArrayList<Interval>();
         if (intervals==null || intervals.size()<1)
         {
             result.add(newInterval);
             return result;
         }
-        if (newInterval==null)
-        {
-            return intervals;
-        }
-        boolean flag=false;
+        // first sort the array
+        Collections.sort(intervals, new IntervalComparator());
+        Interval current=new Interval(newInterval.start, newInterval.end);
         for (int i=0; i<intervals.size(); i++)
         {
-            if (isOverlap(newInterval, intervals.get(i)))
+            // yes, we have overlap, then merge it
+            if (isOverlap(current, intervals.get(i)))
             {
-                // merge this two
-                newInterval.start=newInterval.start>intervals.get(i).start?intervals.get(i).start:newInterval.start;
-                newInterval.end=newInterval.end>intervals.get(i).end?newInterval.end:intervals.get(i).end;
+                current=merge(current, intervals.get(i));
+            }
+            // ok, we keep who ever is later
+            else if (current.start>intervals.get(i).start)
+            {
+                result.add(intervals.get(i));
             }
             else
             {
-                if (intervals.get(i).start<newInterval.start)
-                {
-                    // things before the insert position
-                    result.add(intervals.get(i));
-                }
-                else// if (intervals.get(i).start>newInterval.end)
-                {
-                    // things after the insert position
-                    if (flag==false)
-                    {
-                        result.add(newInterval);
-                        flag=true;
-                    }
-                    result.add(intervals.get(i));
-                }
+                result.add(current);
+                current=intervals.get(i);
             }
         }
-        if (flag==false)
-        {
-            result.add(newInterval);
-            flag=true;
-        }
+        result.add(current);
         return result;
     }
     
-    // we assume
     private boolean isOverlap(Interval x, Interval y)
     {
-        if (x.start<=y.start)
+        if (x.start>y.start)
         {
-            if (y.start<=x.end)
-            {
-                return true;
-            }
-            return false;
+            return y.end>=x.start;
         }
         else
         {
-            if (x.start<=y.end)
-            {
-                return true;
-            }
-            return false;
+            return x.end>=y.start;
         }
+    }
+    
+    private Interval merge(Interval x, Interval y)
+    {
+        return new Interval(Math.min(x.start, y.start), Math.max(x.end, y.end));
+    }
+}
+
+class IntervalComparator implements Comparator<Interval>
+{
+    public int compare(Interval x, Interval y)
+    {
+        if (x.start!=y.start)
+        {
+            return x.start-y.start;
+        }
+        return x.end-y.end;
     }
 }
