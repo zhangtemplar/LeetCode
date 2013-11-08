@@ -1,126 +1,69 @@
-package Solution;
-
-public class WildCardMatching {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		WildCardMatching instance=new WildCardMatching();
-		if (instance.isMatch("babaaababaabababbbbbbaabaabbabababbaababbaaabbbaaab", "aa"))
-		{
-			System.out.println("Match");
-		}
-		else
-		{
-			System.out.println("Unmatch");
-		}
-	}
-
-	public boolean isMatch(String s, String p)
-	{
-		int i=0;
-		int j=0;
-		int ii=0;
-		int jj=-1;
-		if (s==null)
-		{
-			if (p==null)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		while(i<s.length())
-		{
-			if (j<p.length() && (p.charAt(j)=='?' || p.charAt(j)==s.charAt(i)))
-			{
-				i++;
-				j++;
-				continue;
-			}
-			if (j<p.length() && p.charAt(j)=='*')
-			{
-				// save this position, in case we find an unmatch later
-				jj=j++;
-				ii=i;
-				continue;
-			}
-			if (jj>=0 && jj<p.length())
-			{
-				// we found a unmatch
-				// we need to go back to our last *
-				j=jj+1;
-				i=++ii;
-				continue;
-			}
-			return false;
-		}
-		while(j<p.length() && p.charAt(j)=='*')
-		{
-			j++;
-		}
-		return j>=p.length();
-	}
-	
-	public boolean isMatchSlow(String s, String p) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we want to use use recursion
-        return isMatch(s, 0, p, 0);
-    }
-    
-	private boolean isMatch(String s, int i, String p, int j)
-    {
-        if (p==null || j>=p.length())
+public class Solution {
+    public boolean isMatch(String s, String p) {
+        // IMPORTANT: Please reset any member data you declared, as
+        // the same Solution instance will be reused for each test case.
+        if (s==null)
         {
-            if (s!=null && i<s.length())
-            {
-                // p finishes before s
-                return false;
-            }
-            {
-                // the two string matches
-                // because they are emptu
-                return true;
-            }
+            return p==null;
         }
-        // no match
-        else if (s==null || i>=s.length() || (p.charAt(j)!='*' && p.charAt(j)!='?' && p.charAt(j)!=s.charAt(i)))
+        else if(p==null)
         {
             return false;
         }
-        else if (p.charAt(j)=='*')
+        int i=0;
+        int j=0;
+        int i_star=-1;
+        int j_star=-1;
+        while(i<s.length())
         {
-            // for * we have three ways:
-            // 1. skip it
-            if (isMatch(s, i, p, j+1))
+            // if p is not long enough, we try to replace one more character of s by * in p, if there was one
+            if (j>=p.length())
             {
-                return true;
+                // we try to replace one more character of s by * in p, if there was one
+                if (j_star>=0)
+                {
+                    i=++i_star;
+                    j=j_star+1;
+                }
+                else
+                {
+                    break;
+                }
             }
-            // 2. as a single match to s[i]
-            else if(isMatch(s, i+1, p, j+1))
+            // for *, we record its location and skip it
+            else if (p.charAt(j)=='*')
             {
-                return true;
+                i_star=i;
+                j_star=j;
+                j++;
             }
-            // 3. as a match to s[i] and its next
-            else if(isMatch(s, i+1, p, j))
+            // a match or ?
+            else if(p.charAt(j)=='?' || p.charAt(j)==s.charAt(i))
             {
-                return true;
+                i++;
+                j++;
+            }
+            // a mismatch, however, we have a star somewhere back
+            // we use * of p to replace one character of s
+            else if (j_star>=0)
+            {
+                i=++i_star;
+                j=j_star+1;
             }
             else
             {
                 return false;
             }
         }
-        else
+        // for the end, if p is not complete, we need to check whether it is only *
+        while(j<p.length() && p.charAt(j)=='*')
         {
-            // for ? and s[i]=s[j], we compre the next ones
-            return isMatch(s, i+1, p, j+1);
+            j++;
         }
+        if (j<p.length() || i<s.length())
+        {
+            return false;
+        }
+        return true;
     }
 }
