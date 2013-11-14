@@ -1,61 +1,77 @@
-package Solution;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-
-public class PopulatingNextRightPointersEachNodeII {
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void connect(TreeLinkNode root) {
-        // Start typing your Java solution below
-        // DO NOT write main() function
-        // we can a level order traversal
-        // use level-order traverse
-        LinkedList<TreeLinkNode> queue=new LinkedList<TreeLinkNode>();
-        HashMap<TreeLinkNode, Integer> level=new HashMap<TreeLinkNode, Integer>();
+/**
+ * Definition for binary tree with next pointer.
+ * public class TreeLinkNode {
+ *     int val;
+ *     TreeLinkNode left, right, next;
+ *     TreeLinkNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        // we will use recursion
+        // however, since the tree is no longer complete, we can not use something like
+        // root.left.right.next=root.right.left, because it can be no such points,
+        // the solution is that, we always return the rightmost(leftmost) for the function
         if (root==null)
         {
             return;
         }
-        queue.add(root);
-        level.put(root, 0);
-        TreeLinkNode node, prev;
-        node=null;
-        prev=null;
-        int height=0;
-        while(!queue.isEmpty())
+        // for left child, we find the leftmost child of its root or the next of its root
+        if (root.left!=null)
         {
-            node=queue.remove();
-            // add its children and their height accordingly
-            if (node.left!=null)
+            if (root.right!=null)
             {
-                queue.add(node.left);
-                level.put(node.left, level.get(node)+1);
+                root.left.next=root.right;
             }
-            if (node.right!=null)
+            else
             {
-                queue.add(node.right);
-                level.put(node.right, level.get(node)+1);
+                TreeLinkNode node=root.next;
+                while(node!=null)
+                {
+                    if (node.left!=null)
+                    {
+                        root.left.next=node.left;
+                        break;
+                    }
+                    else if(node.right!=null)
+                    {
+                        root.left.next=node.right;
+                        break;
+                    }
+                    node=node.next;
+                }
             }
-            // check whether we have finished the level or not
-            if (level.get(node)!=height)
+        }
+        // similarly for right child
+        if (root.right!=null)
+        {
+            TreeLinkNode node=root.next;
+            while(node!=null)
             {
-                // we finish the previous level
-                prev=null;
-                height=level.get(node);
+                if (node.left!=null)
+                {
+                    root.right.next=node.left;
+                    break;
+                }
+                else if(node.right!=null)
+                {
+                    root.right.next=node.right;
+                    break;
+                }
+                node=node.next;
             }
-            if (prev!=null)
-            {
-                prev.next=node;
-            }
-            prev=node;
+        }
+        // process the child node
+        // it is important to start with right subtree first, because we require the next information
+        // in the previous step
+        if (root.right!=null)
+        {
+            connect(root.right);
+        }
+        if (root.left!=null)
+        {
+            connect(root.left);
         }
     }
 }
