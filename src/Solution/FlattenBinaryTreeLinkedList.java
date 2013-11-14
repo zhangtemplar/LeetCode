@@ -29,13 +29,13 @@ public class Solution {
         {
             tail=subFlatten(root.left);
             root.right=root.left;
+            root.left=null;
         }
         // right subtree is concatenated to the end of the list
         if (right!=null)
         {
             tail.right=right;
             tail=subFlatten(right);
-            TreeNode node=root;
         }
         return tail;
     }
